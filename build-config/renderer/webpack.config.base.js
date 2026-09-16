@@ -12,10 +12,11 @@ const isDev = process.env.NODE_ENV === 'development'
 module.exports = {
   target: 'electron-renderer',
   entry: {
-    // 用 .js 而非 .ts 作入口：界面是自包含的 index.html，不需要打包任何 TS。
-    // 用 .ts 作入口会触发 ts-loader 的全项目类型检查，而 tsconfig.json 里的 paths
-    // 映射是注释掉的（ts-loader 又不认 webpack 的 alias），会报出一堆 @common/* 找不到。
-    renderer: path.join(__dirname, '../../src/renderer/main.js'),
+    // 界面行为逻辑层：音源对接 + 播放核心 + 控制条接管 + 设置面板
+    // 用 .js 而非 .ts 作入口：用 .ts 会触发 ts-loader 的全项目类型检查，
+    // 而 tsconfig.json 里的 paths 映射是注释掉的（ts-loader 又不认 webpack 的 alias），
+    // 会报出一堆 @common/* 找不到。
+    renderer: path.join(__dirname, '../../src/renderer/app.js'),
   },
   output: {
     filename: '[name].js',
@@ -137,9 +138,9 @@ module.exports = {
     new HTMLPlugin({
       filename: 'index.html',
       template: path.join(__dirname, '../../src/renderer/index.html'),
-      // 界面是自包含的单文件 HTML（样式与脚本全部内联），
-      // 不需要注入任何打包产物，所以关掉自动注入
-      inject: false,
+      // 界面 HTML 由 lizi 单文件提供（自包含），行为逻辑打包成 renderer.js，
+      // 这里让 webpack 自动把 <script src="renderer.js"> 注入到 </body> 前
+      inject: 'body',
       isProd: process.env.NODE_ENV == 'production',
       browser: process.browser,
       __dirname,
