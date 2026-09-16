@@ -7,7 +7,9 @@ const Spinnies = require('spinnies')
 
 const mainConfig = './main/webpack.config.prod'
 const rendererConfig = './renderer/webpack.config.prod'
-const rendererLyricConfig = './renderer-lyric/webpack.config.prod'
+// renderer-lyric（桌面歌词独立窗口）的前端已于 2026-09-16 随旧界面一起移除，
+// 源码目录不存在了，再编译只会报错。新界面没有这个窗口，故跳过。
+// const rendererLyricConfig = './renderer-lyric/webpack.config.prod'
 const rendererScriptConfig = './renderer-scripts/webpack.config.prod'
 
 const errorLog = chalk.bgRed.white(' ERROR ') + ' '
@@ -23,7 +25,6 @@ function build() {
   const spinners = new Spinnies({ color: 'blue' })
   spinners.add('main', { text: 'main building' })
   spinners.add('renderer', { text: 'renderer building' })
-  spinners.add('renderer-lyric', { text: 'renderer-lyric building' })
   spinners.add('renderer-scripts', { text: 'renderer-scripts building' })
   let results = ''
 
@@ -60,15 +61,16 @@ function build() {
       console.error(`\n${err}\n`)
       process.exit(1)
     }),
-    pack(rendererLyricConfig).then(result => {
-      results += result + '\n\n'
-      spinners.succeed('renderer-lyric', { text: 'renderer-lyric build success!' })
-    }).catch(err => {
-      spinners.fail('renderer-lyric', { text: 'renderer-lyric build fail :(' })
-      console.log(`\n  ${errorLog}failed to build renderer-lyric process`)
-      console.error(`\n${err}\n`)
-      process.exit(1)
-    }),
+    // renderer-lyric 已移除，跳过（见文件顶部说明）
+    // pack(rendererLyricConfig).then(result => {
+    //   results += result + '\n\n'
+    //   spinners.succeed('renderer-lyric', { text: 'renderer-lyric build success!' })
+    // }).catch(err => {
+    //   spinners.fail('renderer-lyric', { text: 'renderer-lyric build fail :(' })
+    //   console.log(`\n  ${errorLog}failed to build renderer-lyric process`)
+    //   console.error(`\n${err}\n`)
+    //   process.exit(1)
+    // }),
     pack(rendererScriptConfig).then(result => {
       results += result + '\n\n'
       spinners.succeed('renderer-scripts', { text: 'renderer-scripts build success!' })

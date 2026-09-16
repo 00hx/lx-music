@@ -2276,16 +2276,52 @@ const APP_DIR = (() => {
 })()
 
 /**
- * 音源目录（按优先级）：
- *   1. 项目根/_sources        —— 开发期首选。往这里丢一个 .js 就能用，
- *                               不用动源码、不用重新编译
- *   2. dist/static/sources    —— 打包后随包带的备选源
+ * 音源目录（按优先级取第一个存在的）：
+ *   1. 项目根/_sources              —— 开发期首选。往这里丢 .js 就能用，不用重新编译
+ *   2. %APPDATA%/lx-music-desktop/sources —— 打包后的主目录（可写，用户自己加源放这）
+ *   3. dist/static/sources          —— 随包内置的兜底源（打包后是只读的 asar）
+ *
+ * 打包后 asar 里的目录是只读的，用户没法往里丢文件，所以第一次启动会把内置源
+ * 拷一份到第 2 个目录（可写），之后「打开音源目录」也指向它。
  * 换默认音源：把文件名改成以 default 开头（或叫 qdy），启动时优先挑它。
  */
-const SOURCE_DIRS = [
-  path.join(APP_DIR, '..', '_sources'),
-  path.join(APP_DIR, 'static', 'sources'),
-]
+const SOURCE_DEV_DIR = path.join(APP_DIR, '..', '_sources')
+const SOURCE_USER_DIR = process.env.APPDATA
+  ? path.join(process.env.APPDATA, 'lx-music-desktop', 'sources')
+  : ''
+const SOURCE_BUILTIN_DIR = path.join(APP_DIR, 'static', 'sources')
+const SOURCE_DIRS = [SOURCE_DEV_DIR, SOURCE_USER_DIR, SOURCE_BUILTIN_DIR].filter(Boolean)
+
+/**
+ * 打包运行时（项目根没有 _sources）就把内置源补到用户目录，让用户能增删。
+ * 已存在的文件不动（用户可能自己改过或替换过），只补缺的 —— 这样软件升级后
+ * 新增的内置源会自动出现。
+ */
+function ensureUserSourceDir() {
+  try {
+    if (fs.existsSync(SOURCE_DEV_DIR)) return          // 开发期，不用管用户目录
+    if (!SOURCE_USER_DIR) return
+    let builtin = null
+    for (const d of [SOURCE_BUILTIN_DIR]) {
+      try { if (fs.existsSync(d)) { builtin = d; break } } catch (e) { /* 忽略 */ }
+    }
+    if (!builtin) return
+
+    let created = 0
+    try { fs.mkdirSync(SOURCE_USER_DIR, { recursive: true }) } catch (e) { /* 已存在 */ }
+    for (const f of fs.readdirSync(builtin)) {
+      if (!/\.(js|txt)$/i.test(f)) continue
+      // 内置的是 .txt（躲 webpack 压缩用的），拷过去改成 .js 更顺眼
+      const dest = path.join(SOURCE_USER_DIR, f.replace(/\.txt$/i, '.js'))
+      if (fs.existsSync(dest)) continue
+      fs.copyFileSync(path.join(builtin, f), dest)
+      created++
+    }
+    if (created) console.log('[lx] 已向音源目录补充 ' + created + ' 个内置源：' + SOURCE_USER_DIR)
+  } catch (e) {
+    console.warn('[lx] 初始化音源目录失败', e)
+  }
+}
 
 /** 找到第一个存在的音源目录 */
 function findSourceDir() {
@@ -2375,6 +2411,7 @@ async function importOnlineSource(id) {
 
 async function boot() {
   S.load()
+  ensureUserSourceDir()      // 打包运行时：把内置音源拷到可写的用户目录
   injectStyle()
   injectPanel()
 

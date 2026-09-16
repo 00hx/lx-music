@@ -10,10 +10,8 @@ module.exports = merge(baseConfig, {
   devtool: 'eval-source-map',
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"development"',
-        ELECTRON_DISABLE_SECURITY_WARNINGS: 'true',
-      },
+      'process.env.NODE_ENV': '"development"',
+'process.env.ELECTRON_DISABLE_SECURITY_WARNINGS': 'true',
       staticPath: `"${path.join(__dirname, '../../src/static').replace(/\\/g, '\\\\')}"`,
     }),
   ],

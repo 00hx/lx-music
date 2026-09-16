@@ -11,6 +11,12 @@ const afterPack = require('./build-after-pack')
 const options = {
   appId: 'cn.toside.music.desktop',
   productName: 'lx-music-desktop',
+  // 本机没有 Visual Studio C++ 工具链，@electron/rebuild 重编原生模块必然失败
+  // （实测卡在 bufferutil 上直接报 "Could not find any Visual Studio installation"）。
+  // 跳过重编不影响使用：
+  //   - better-sqlite3 的 Electron 版二进制由 beforePack 钩子从包自带 prebuilds 拷入
+  //   - bufferutil / utf-8-validate 只是 ws 的可选性能依赖，缺了会自动回落到 JS 实现
+  npmRebuild: false,
   beforePack,
   afterPack,
   protocols: {
@@ -42,6 +48,13 @@ const options = {
   },
   extraResources: [
     './licenses',
+  ],
+  // 本机全局有 ELECTRON_RUN_AS_NODE=1，会让 Electron 双击后退化成一个空转的
+  // Node 解释器、窗口不出现（在那个模式下 Electron 不读 package.json 的 main，
+  // 应用代码一行都跑不到，没法自救）。所以随包附一个 VBS 启动器：双击它先把
+  // 污染变量摘掉再拉起应用，全程没有黑框。详见该文件内的说明。
+  extraFiles: [
+    { from: './build-config/launcher/启动 LX Music.vbs', to: '启动 LX Music.vbs' },
   ],
   publish: [
     {
