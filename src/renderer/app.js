@@ -331,16 +331,19 @@ const lx = {
       return
     }
 
-    // 一个源都没有 → 从磁盘导入随包带的默认脚本
-    const file = path.join(APP_DIR, 'static', 'qdy-source.txt')
-    if (!fs.existsSync(file)) {
+    // 一个源都没有 → 从音源目录导入默认脚本
+    const { dir, files } = listSourceFiles()
+    const target = pickDefaultSourceFile(files)
+    if (!target) {
       this.state = 'fail'
-      this.message = '找不到音源文件 ' + file
+      this.message = dir
+        ? ('音源目录里没有可导入的脚本：' + dir)
+        : '没找到音源目录（_sources / dist/static/sources）'
       return
     }
     try {
-      const info = await this.import(fs.readFileSync(file, 'utf8'))
-      await this.enable(info.id)
+      const info = await importSourceFile(target.path)
+      console.log('[lx] 已从 ' + target.path + ' 导入默认音源：' + info.name)
     } catch (e) {
       this.state = 'fail'
       this.message = e && e.message ? e.message : String(e)
@@ -922,6 +925,8 @@ const PANEL_HTML = `
         </div>
         <div class="lxp__sub">已安装的音源（点击切换启用）</div>
         <div class="lxList" id="lxApiList"></div>
+        <div class="lxp__sub" id="lxDirTitle">音源目录</div>
+        <div class="lxList" id="lxDirList"></div>
       </div>
 
       <!-- ── 队列 ── -->
@@ -1144,6 +1149,37 @@ function renderApiPage() {
       '<div class="lxItem__act"><button data-remove="' + esc(a.id) + '" title="删除">✕</button></div>' +
     '</div>'
   }).join('')
+
+  renderSourceDir()
+}
+
+/** 音源页下半部分：把音源目录里的脚本列出来，点一下即导入并启用 */
+function renderSourceDir() {
+  const title = $('#lxDirTitle')
+  const box = $('#lxDirList')
+  if (!box) return
+
+  const { dir, files } = listSourceFiles()
+  if (title) {
+    title.textContent = dir
+      ? ('音源目录 · 点一下就导入 —— ' + dir)
+      : '音源目录（没找到，可用上面的「选择文件导入」）'
+  }
+
+  if (!files.length) {
+    box.innerHTML = '<div class="lxEmpty">目录里没有 .js / .txt 音源脚本</div>'
+    return
+  }
+
+  box.innerHTML = files.map(f =>
+    '<div class="lxItem" data-srcfile="' + esc(f.name) + '">' +
+      '<div class="lxItem__main">' +
+        '<div class="lxItem__name">' + esc(f.name) + '</div>' +
+        '<div class="lxItem__meta">' + (f.size / 1024).toFixed(1) + ' KB</div>' +
+      '</div>' +
+      '<div class="lxItem__act"><button title="导入并启用">＋</button></div>' +
+    '</div>'
+  ).join('')
 }
 
 /** 队列页 */
@@ -1722,6 +1758,23 @@ function bindPanel() {
       return
     }
 
+    // 音源目录里的文件：点一下就导入并启用
+    const sf = e.target.closest('[data-srcfile]')
+    if (sf) {
+      e.stopPropagation()
+      const name = sf.dataset.srcfile
+      const { files } = listSourceFiles()
+      const target = files.find(f => f.name === name)
+      if (!target) return
+      importSourceFile(target.path)
+        .then(info => {
+          toast('已导入并启用：' + info.name)
+          renderApiPage()
+        })
+        .catch(err => toast('导入失败：' + (err.message || err)))
+      return
+    }
+
     // 队列
     const del = e.target.closest('[data-delqueue]')
     if (del) {
@@ -1785,15 +1838,15 @@ function bindPanel() {
   // 音源导入
   $('#lxImportFile').addEventListener('click', async () => {
     try {
+      const dir = findSourceDir()
       const r = await ipcRenderer.invoke(CH.selectDialog, {
         title: '选择音源脚本',
+        defaultPath: dir || undefined,
         properties: ['openFile'],
         filters: [{ name: '音源脚本', extensions: ['js', 'txt'] }],
       })
       if (!r || r.canceled || !r.filePaths || !r.filePaths.length) return
-      const text = fs.readFileSync(r.filePaths[0], 'utf8')
-      const info = await lx.import(text)
-      await lx.enable(info.id)
+      const info = await importSourceFile(r.filePaths[0])
       toast('已导入并启用：' + info.name)
       renderApiPage()
     } catch (e) {
@@ -1824,7 +1877,12 @@ function bindPanel() {
   })
   $('#lxOpenDir').addEventListener('click', () => {
     try {
-      ipcRenderer.send(CH.openDirInExplorer, path.join(APP_DIR, 'static'))
+      const dir = findSourceDir()
+      if (!dir) {
+        toast('没找到音源目录，用上面的「选择文件导入」选一个')
+        return
+      }
+      ipcRenderer.send(CH.openDirInExplorer, dir)
     } catch (e) {
       toast('打不开目录')
     }
@@ -1935,7 +1993,7 @@ function bindKeyboard() {
    十四、启动
    ════════════════════════════════════════════════════════════ */
 
-/** 应用目录（dist/），用于定位 static/qdy-source.txt。
+/** 应用目录（dist/）。
  *  不用 __dirname：它经过 webpack 处理后语义会变，用页面 URL 反推最稳。 */
 const APP_DIR = (() => {
   try {
@@ -1945,6 +2003,63 @@ const APP_DIR = (() => {
     return __dirname
   }
 })()
+
+/**
+ * 音源目录（按优先级）：
+ *   1. 项目根/_sources        —— 开发期首选。往这里丢一个 .js 就能用，
+ *                               不用动源码、不用重新编译
+ *   2. dist/static/sources    —— 打包后随包带的备选源
+ * 换默认音源：把文件名改成以 default 开头（或叫 qdy），启动时优先挑它。
+ */
+const SOURCE_DIRS = [
+  path.join(APP_DIR, '..', '_sources'),
+  path.join(APP_DIR, 'static', 'sources'),
+]
+
+/** 找到第一个存在的音源目录 */
+function findSourceDir() {
+  for (const dir of SOURCE_DIRS) {
+    try {
+      if (fs.existsSync(dir) && fs.statSync(dir).isDirectory()) return dir
+    } catch (e) { /* 试下一个 */ }
+  }
+  return null
+}
+
+/** 列出音源目录里可导入的脚本（下划线开头的临时文件不算） */
+function listSourceFiles() {
+  const dir = findSourceDir()
+  if (!dir) return { dir: null, files: [] }
+  let files = []
+  try {
+    files = fs.readdirSync(dir)
+      .filter(f => /\.(js|txt)$/i.test(f) && !f.startsWith('_'))
+      .map(f => {
+        let size = 0
+        try { size = fs.statSync(path.join(dir, f)).size } catch (e) { /* 忽略 */ }
+        return { name: f, size, path: path.join(dir, f) }
+      })
+      .sort((a, b) => a.name.localeCompare(b.name))
+  } catch (e) {
+    console.warn('[lx] 读不到音源目录', e)
+  }
+  return { dir, files }
+}
+
+/** 挑默认音源：优先 default*，其次 qdy*，再其次第一个 */
+function pickDefaultSourceFile(files) {
+  if (!files || !files.length) return null
+  return files.find(f => /default/i.test(f.name)) ||
+    files.find(f => /qdy/i.test(f.name)) ||
+    files[0]
+}
+
+/** 从本地文件导入并启用一个音源 */
+async function importSourceFile(filePath) {
+  const info = await lx.import(fs.readFileSync(filePath, 'utf8'))
+  await lx.enable(info.id)
+  return info
+}
 
 async function boot() {
   S.load()

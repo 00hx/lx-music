@@ -67,6 +67,8 @@ const TEST = `(async () => {
   R.panelOpen = !q('#lxPanel').hidden
   R.tabs = qa('.lxp__tabs button').map(b => b.textContent.trim())
   R.apiListItems = qa('#lxApiList .lxItem').length
+  R.sourceDir = q('#lxDirTitle') ? q('#lxDirTitle').textContent : null
+  R.dirFiles = qa('#lxDirList .lxItem .lxItem__name').map(x => x.textContent)
   qa('.lxp__tabs button')[1].click(); await nap(200)
   R.queueItems = qa('#lxQueueList .lxItem').length
   qa('.lxp__tabs button')[2].click(); await nap(200)
