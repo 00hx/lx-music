@@ -129,10 +129,41 @@ const TEST = `(async () => {
   R.qualityPopup = !!q('.lxPop')
   q('.btn--std').click(); await nap(200)
 
-  q('.btn[aria-label="睡眠定时"]').click(); await nap(250)
-  R.sleepPopup = !!q('.lxPop')
-  if (q('.lxPop')) q('.lxPop__item').click()
-  await nap(150)
+  // ── 音量：控制条第 11 个按钮（原先是睡眠定时）──
+  const volBtn = q('.btn--vol')
+  R.volBtnExists = !!volBtn
+  volBtn.click(); await nap(350)
+  R.volPopupOpens = !!q('#lxPopVol')
+  const vr = q('#lxPopVol')
+  if (vr) {
+    vr.value = '35'
+    vr.dispatchEvent(new Event('input', { bubbles: true }))
+    await nap(200)
+    R.volSet35 = Math.round(S.volume * 100) === 35
+    R.volAppliedToAudio = Math.abs(audio.volume - 0.35) < 0.001
+    R.volText = q('#lxPopVolText') ? q('#lxPopVolText').textContent : null
+    R.volPanelInSync = q('#lxVolume') ? q('#lxVolume').value : null
+  }
+  q('.lxPop__mute') && q('.lxPop__mute').click(); await nap(250)
+  R.muteWorks = S.volume === 0 && volBtn.classList.contains('is-mute')
+  q('.lxPop__mute') && q('.lxPop__mute').click(); await nap(250)
+  R.unmuteRestores35 = Math.round(S.volume * 100) === 35
+  volBtn.click(); await nap(250)
+  R.volPopupClosesOnSecondClick = !q('.lxPop')
+
+  // ── 睡眠定时：改成从设置面板「控制」页测（控制条上那个按钮已换成音量）──
+  window.lxApp.openPanel('play')
+  await nap(400)
+  const sleep15 = q('[data-sleep="15"]')
+  R.sleepSegInPanel = !!sleep15
+  if (sleep15) {
+    sleep15.click(); await nap(300)
+    R.sleepTimerSet = S.sleepMinutes === 15 && S.sleepEnd > Date.now()
+    q('[data-sleep="0"]').click(); await nap(250)
+    R.sleepTimerCleared = S.sleepMinutes === 0 && S.sleepEnd === 0
+  }
+  window.lxApp.closePanel()
+  await nap(300)
 
   const sp0 = S.space
   qa('.btn--text').find(b => b.textContent.trim() === '360').click(); await nap(300)

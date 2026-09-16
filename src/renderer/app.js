@@ -752,7 +752,7 @@ const CSS = `
 }
 #lxToast.is-on{ opacity:1; transform:translate(-50%,0); }
 
-/* ── 弹出小菜单（音质 / 睡眠定时等）── */
+/* ── 弹出小菜单（音质等）/ 音量浮层 ── */
 .lxPop{
   position:fixed; z-index:80;
   min-width:132px; padding:6px;
@@ -774,6 +774,22 @@ const CSS = `
 .lxPop__item:hover{ background:rgba(255,255,255,.09); }
 .lxPop__item.is-on{ color:var(--track-fill); }
 .lxPop__item small{ color:rgba(255,255,255,.42); font-size:11px; }
+
+/* 音量浮层（里面是一根滑块，所以比普通菜单宽一点） */
+.lxPop--vol{ display:flex; align-items:center; gap:11px; min-width:0; padding:10px 12px; }
+.lxPop--vol .lxRange{ width:126px; }
+.lxPop--vol > span{ width:40px; text-align:right; font-size:12px; color:rgba(255,255,255,.62);
+  font-variant-numeric:tabular-nums; }
+.lxPop__mute{ flex:none; width:26px; height:26px; padding:0; border:0; border-radius:8px; cursor:pointer;
+  background:transparent; color:rgba(255,255,255,.66); display:grid; place-items:center; }
+.lxPop__mute:hover{ background:rgba(255,255,255,.1); color:#fff; }
+.lxPop__mute svg{ width:17px; height:17px; }
+
+/* 控制条喇叭按钮：静音时收掉声波、显示叉 */
+.btn--vol .vol-wave, .btn--vol .vol-x{ transition:opacity .14s ease; }
+.btn--vol .vol-x{ opacity:0; }
+.btn--vol.is-mute .vol-x{ opacity:1; }
+.btn--vol.is-mute .vol-wave{ opacity:0; }
 
 /* ── 设置面板 ── */
 .lxp{ position:fixed; inset:0; z-index:85; display:flex; align-items:center; justify-content:center;
@@ -1373,11 +1389,7 @@ function renderFav() {
 
 /** 控制页的滑块与分段 */
 function renderControls() {
-  const v = $('#lxVolume')
-  if (v) {
-    v.value = String(Math.round(S.volume * 100))
-    $('#lxVolumeText').textContent = Math.round(S.volume * 100) + '%'
-  }
+  syncVolumeUI()
 
   const qs = $('#lxQualitySeg')
   if (qs) {
@@ -1494,6 +1506,92 @@ function onDocDown(e) {
   }
 }
 
+/* ── 音量 ──
+   控制条的喇叭按钮和设置面板「控制」页的滑块共用这一套逻辑，改哪边另一边都会跟着动。 */
+let lastVolume = 0.8   // 静音前的音量，用于还原
+
+/** 改音量、落到 audio、同步界面。persist=false 时不写盘 */
+function setVolume(v, persist) {
+  const n = Math.max(0, Math.min(1, Number(v) || 0))
+  S.volume = n
+  audio.volume = n
+  syncVolumeUI()
+  if (persist !== false) S.save()
+  return n
+}
+
+/** 把音量同步到三处：控制条喇叭状态、设置面板滑块、音量浮层（没开就自动跳过） */
+function syncVolumeUI() {
+  if (S.volume > 0) lastVolume = S.volume
+  const pct = Math.round(S.volume * 100)
+  const pv = $('#lxPopVol')
+  if (pv) pv.value = String(pct)
+  const pt = $('#lxPopVolText')
+  if (pt) pt.textContent = pct + '%'
+  const btn = $('.btn--vol')
+  if (btn) btn.classList.toggle('is-mute', S.volume === 0)
+  const v = $('#lxVolume')
+  if (v) v.value = String(pct)
+  const t = $('#lxVolumeText')
+  if (t) t.textContent = pct + '%'
+}
+
+/** 静音 / 还原到上次的音量 */
+function toggleMute() {
+  const next = S.volume > 0 ? 0 : (lastVolume || 0.8)
+  setVolume(next)
+  toast(next === 0 ? '已静音' : '音量 ' + Math.round(next * 100) + '%')
+}
+
+/**
+ * 音量浮层：一根原生滑块 + 一个静音键。
+ * 没复用 openPopup()，因为那个只支持「一行一个选项」，塞不进滑块。
+ */
+function openVolumePopup(anchor) {
+  closePopup()
+  const box = document.createElement('div')
+  box.className = 'lxPop lxPop--vol'
+  box.dataset.kind = 'volume'
+  box.innerHTML =
+    '<button class="lxPop__mute" title="静音 / 还原">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M4.8 9.5h2.9L11.6 6.3v11.4l-3.9-3.2H4.8z"/>' +
+        '<path d="M15.3 10.1l4.3 4.2M19.6 10.1l-4.3 4.2"/>' +
+      '</svg>' +
+    '</button>' +
+    '<input class="lxRange" id="lxPopVol" type="range" min="0" max="100" aria-label="音量">' +
+    '<span id="lxPopVolText"></span>'
+  document.body.appendChild(box)
+  syncVolumeUI()
+
+  const range = box.querySelector('#lxPopVol')
+  range.addEventListener('input', () => setVolume(Number(range.value) / 100))
+  box.querySelector('.lxPop__mute').addEventListener('click', toggleMute)
+
+  const r = anchor.getBoundingClientRect()
+  const bw = box.offsetWidth
+  const bh = box.offsetHeight
+  let left = r.left + r.width / 2 - bw / 2
+  left = Math.max(12, Math.min(left, window.innerWidth - bw - 12))
+  let top = r.top - bh - 10
+  if (top < 12) top = r.bottom + 10
+  box.style.left = left + 'px'
+  box.style.top = top + 'px'
+  popEl = box
+
+  setTimeout(() => document.addEventListener('pointerdown', onDocDown, true), 0)
+}
+
+/** 睡眠定时：控制条上那个时钟按钮已换成音量，现在只被设置面板调用 */
+function setSleep(m) {
+  S.sleepMinutes = m
+  S.sleepEnd = m ? Date.now() + m * 60000 : 0
+  S.save()
+  renderControls()
+  renderTime()
+  toast(m ? m + ' 分钟后自动暂停' : '已关闭睡眠定时')
+}
+
 /* ════════════════════════════════════════════════════════════
    十一、动作
    ════════════════════════════════════════════════════════════ */
@@ -1564,21 +1662,13 @@ const ACT = {
     }
   },
 
-  /* 睡眠定时 */
-  sleep(anchor) {
-    const opts = [0, 15, 30, 60, 90]
-    openPopup(anchor, opts.map(m => ({
-      label: m === 0 ? '关闭定时' : m + ' 分钟后暂停',
-      on: S.sleepMinutes === m && !!S.sleepEnd,
-      onClick: () => {
-        S.sleepMinutes = m
-        S.sleepEnd = m ? Date.now() + m * 60000 : 0
-        S.save()
-        renderControls()
-        renderTime()
-        toast(m ? m + ' 分钟后自动暂停' : '已关闭睡眠定时')
-      },
-    })))
+  /* 音量：弹出滑块（再点一次同一个按钮就收起） */
+  volume(anchor) {
+    if (popEl && popEl.dataset.kind === 'volume') {
+      closePopup()
+      return
+    }
+    openVolumePopup(anchor)
   },
 
   /* 空间音频 */
@@ -1926,8 +2016,8 @@ function bindControlBar() {
   on('.btn[aria-label="下一曲"]', () => P.next(true))
   // 10 播放队列
   on('.btn[aria-label="播放队列"]', () => openPanel('queue'))
-  // 11 睡眠定时
-  on('.btn[aria-label="睡眠定时"]', e => ACT.sleep(e.currentTarget))
+  // 11 音量
+  on('.btn--vol', e => ACT.volume(e.currentTarget))
   // 12 360 空间音频
   const btn360 = $$('.btn--text').find(b => b.textContent.trim() === '360')
   if (btn360) btn360.addEventListener('click', () => ACT.toggleSpace())
@@ -2087,13 +2177,7 @@ function bindPanel() {
     if (md) { ACT.setMode(md.dataset.mode); return }
     const sl = e.target.closest('[data-sleep]')
     if (sl) {
-      const m = Number(sl.dataset.sleep)
-      S.sleepMinutes = m
-      S.sleepEnd = m ? Date.now() + m * 60000 : 0
-      S.save()
-      renderControls()
-      renderTime()
-      toast(m ? m + ' 分钟后自动暂停' : '已关闭睡眠定时')
+      setSleep(Number(sl.dataset.sleep))
       return
     }
   })
@@ -2159,12 +2243,7 @@ function bindPanel() {
   $('#lxSearchGo').addEventListener('click', () => doSearch(si.value.trim(), '#lxSearchRes'))
 
   // 控制页
-  $('#lxVolume').addEventListener('input', e => {
-    S.volume = Number(e.target.value) / 100
-    audio.volume = S.volume
-    $('#lxVolumeText').textContent = e.target.value + '%'
-    S.save()
-  })
+  $('#lxVolume').addEventListener('input', e => setVolume(Number(e.target.value) / 100))
   $('#lxSpace').addEventListener('click', () => ACT.toggleSpace())
   $('#lxClearCache').addEventListener('click', async () => {
     try {
@@ -2259,17 +2338,11 @@ function bindKeyboard() {
         break
       case 'ArrowUp':
         e.preventDefault()
-        S.volume = Math.min(1, S.volume + 0.05)
-        audio.volume = S.volume
-        S.save()
-        renderControls()
+        setVolume(S.volume + 0.05)
         break
       case 'ArrowDown':
         e.preventDefault()
-        S.volume = Math.max(0, S.volume - 0.05)
-        audio.volume = S.volume
-        S.save()
-        renderControls()
+        setVolume(S.volume - 0.05)
         break
       case 'Escape':
         if (!$('#lxSearch').hidden) closeSearch()

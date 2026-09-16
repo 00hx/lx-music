@@ -1677,7 +1677,7 @@ animate();
 <!-- ============================================================
      底部横向胶囊播放控制条（叠加在粒子画面之上）
      顺序 1→15：封面 · STD · 心形 · 加号 · 单曲循环 · 随机 ·
-     上一曲 · 大暂停 · 下一曲 · 播放队列 · 睡眠定时 · 360 · 词 ·
+     上一曲 · 大暂停 · 下一曲 · 播放队列 · 音量 · 360 · 词 ·
      全屏 · 时间
      ============================================================ -->
 <div class="player">
@@ -1752,10 +1752,13 @@ animate();
       </svg>
     </button>
 
-    <!-- 11. 睡眠定时（时钟） -->
-    <button class="btn" aria-label="睡眠定时">
+    <!-- 11. 音量（喇叭；点开一根滑块） -->
+    <button class="btn btn--vol" aria-label="音量">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="8.2"/><path d="M12 7.6V12l3.1 1.9"/>
+        <path d="M4.8 9.5h2.9L11.6 6.3v11.4l-3.9-3.2H4.8z"/>
+        <path class="vol-wave" d="M15.1 9.9a3.2 3.2 0 0 1 0 4.2"/>
+        <path class="vol-wave" d="M17.6 7.5a6.6 6.6 0 0 1 0 9"/>
+        <path class="vol-x" d="M15.3 10.1l4.3 4.2M19.6 10.1l-4.3 4.2"/>
       </svg>
     </button>
 
