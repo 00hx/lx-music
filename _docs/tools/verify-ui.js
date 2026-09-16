@@ -55,8 +55,18 @@ const TEST = `(async () => {
   if (!window.lxApp) { R.fatal = 'lxApp 未挂载'; return R }
   const { S, P, lx, audio } = window.lxApp
 
-  // ── 音源 ──
-  for (let i = 0; i < 20 && lx.state !== 'ok'; i++) await nap(500)
+  // ── 音源：先清掉历史，回到「全新安装」状态，再让 bootstrap 用默认源 ──
+  // 否则上一轮验证装过的源会留着，导致每次测的源都不一样、结果不可比
+  if (lx.list.length) {
+    await lx.remove(lx.list.map(a => a.id))
+    lx.state = 'idle'
+    lx.current = null
+    S.lastApiId = ''
+    S.save()
+    await nap(1200)
+  }
+  await lx.bootstrap()
+  for (let i = 0; i < 30 && lx.state !== 'ok'; i++) await nap(500)
   R.apiState = lx.state
   R.apiName = lx.current ? lx.current.name : null
   R.apiListLen = lx.list.length
@@ -90,9 +100,30 @@ const TEST = `(async () => {
   q('.btn[aria-label="收藏"]').click(); await nap(150)
   R.favDelta = S.favorites.length - fav0
 
-  const qlen0 = S.queue.length
-  q('.btn[aria-label="添加"]').click(); await nap(150)
-  R.queueDelta = S.queue.length - qlen0
+  // 「添加」按钮 → 打开搜索加歌浮层
+  R.topSearchBtn = !!q('#lxTopSearch')
+  q('.btn[aria-label="添加"]').click()
+  await nap(400)
+  R.searchOpen = !q('#lxSearch').hidden
+  const kw = q('#lxSearchKw')
+  kw.value = '夜曲'
+  kw.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+  for (let i = 0; i < 30; i++) {
+    await nap(500)
+    if (qa('#lxSearchRes2 .lxItem').length) break
+  }
+  R.searchResults = qa('#lxSearchRes2 .lxItem').length
+  R.searchFirst = q('#lxSearchRes2 .lxItem__name') ? q('#lxSearchRes2 .lxItem__name').textContent : null
+  R.searchFirstMeta = q('#lxSearchRes2 .lxItem__meta') ? q('#lxSearchRes2 .lxItem__meta').textContent : null
+  const qn0 = S.queue.length
+  const plusBtn = q('#lxSearchRes2 .lxItem [data-queue]')
+  if (plusBtn) plusBtn.click()
+  await nap(600)
+  R.queueDeltaByPlus = S.queue.length - qn0
+  const closeEl = q('#lxSearch [data-sclose]')
+  if (closeEl) closeEl.click()
+  await nap(300)
+  R.searchClosed = q('#lxSearch').hidden
 
   q('.btn--std').click(); await nap(250)
   R.qualityPopup = !!q('.lxPop')
@@ -259,6 +290,22 @@ app.whenReady().then(async () => {
     await wait(700)
     fs.writeFileSync(path.join(SHOT_DIR, 'shot-settings.png'), (await win.webContents.capturePage()).toPNG())
     log('截图: _docs/screenshots/shot-settings.png')
+  } catch (e) { log('截图失败: ' + e.message) }
+
+  // 截图 3：搜索加歌浮层（现场搜一次，让截图里有真实结果）
+  try {
+    await win.webContents.executeJavaScript(`(async () => {
+      document.querySelector('#lxPanel').hidden = true
+      window.lxApp.openSearch()
+      await new Promise(r => setTimeout(r, 300))
+      const kw = document.querySelector('#lxSearchKw')
+      kw.value = '周杰伦'
+      kw.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+      return true
+    })()`, true)
+    await wait(3500)
+    fs.writeFileSync(path.join(SHOT_DIR, 'shot-search.png'), (await win.webContents.capturePage()).toPNG())
+    log('截图: _docs/screenshots/shot-search.png')
   } catch (e) { log('截图失败: ' + e.message) }
 
   app.exit(0)

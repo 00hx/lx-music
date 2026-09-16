@@ -421,23 +421,27 @@ const P = {
     const song = this.current()
     renderPlayingInfo()
 
-    const ok = await lx.ready(15000)
-    if (!ok) {
-      setPlayingState(false)
-      toast('音源还没就绪，稍安勿躁')
-      return
+    if (song.source !== 'local') {
+      const ok = await lx.ready(15000)
+      if (!ok) {
+        setPlayingState(false)
+        toast('音源还没就绪，稍等几秒再点')
+        return
+      }
     }
 
     let url = null
-    try {
-      url = await lx.url(song, S.quality)
-    } catch (e) {
-      console.warn('[lx] 取地址失败', e)
-    }
-
-    if (!url) {
-      // 高音质拿不到就退回标准音质再试一次
-      if (S.quality !== '128k') {
+    if (song.source === 'local' && song.localPath) {
+      // 本地文件不经过音源，直接读盘
+      url = localFileUrl(song.localPath)
+    } else {
+      try {
+        url = await lx.url(song, S.quality)
+      } catch (e) {
+        console.warn('[lx] 取地址失败', e)
+      }
+      if (!url && S.quality !== '128k') {
+        // 高音质拿不到就退回标准音质再试一次
         const fallback = '128k'
         console.warn('[lx] ' + S.quality + ' 拿不到地址，回退 ' + fallback)
         try {
@@ -449,7 +453,7 @@ const P = {
 
     if (!url) {
       setPlayingState(false)
-      toast('这首歌拿不到播放地址，换一首试试')
+      toast('这首歌拿不到播放地址，去房子按钮里换个音源试试')
       return
     }
 
@@ -457,7 +461,7 @@ const P = {
     audio.volume = S.volume
     if (autoplay !== false) safePlay(1)
 
-    this.loadLyric(song)
+    if (song.source !== 'local') this.loadLyric(song)
     renderQueue()
   },
 
@@ -523,6 +527,7 @@ const P = {
     this.lyric = []
     this.lyricIndex = -1
     renderLyric()
+    if (!song || !song.songmid || song.source === 'local') return   // 本地文件没有在线歌词
     const base = 'https://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=' +
       encodeURIComponent(song.songmid) + '&httpsStatus=1'
     for (let i = 0; i < 3; i++) {
@@ -899,6 +904,60 @@ const CSS = `
 .lxLyric p:hover{ color:rgba(255,255,255,.8); }
 .lxLyric p.is-on{ color:#fff; font-size:17.5px; text-shadow:0 0 18px rgba(135,226,221,.55); }
 .lxLyric__empty{ color:rgba(255,255,255,.3); }
+
+/* ── 搜索加歌浮层 ── */
+.lxSearch{
+  position:fixed; inset:0; z-index:88;
+  display:flex; align-items:flex-start; justify-content:center;
+  padding-top:11vh;
+  font:13px/1.5 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif; color:var(--fg);
+}
+.lxSearch[hidden]{ display:none; }
+.lxSearch__mask{ position:absolute; inset:0; background:rgba(0,0,0,.45);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+.lxSearch__box{
+  position:relative; width:min(640px,92vw); max-height:72vh;
+  display:flex; flex-direction:column;
+  border-radius:18px; overflow:hidden;
+  background:rgba(18,18,26,.84);
+  -webkit-backdrop-filter:blur(26px) saturate(150%);
+          backdrop-filter:blur(26px) saturate(150%);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+  animation:lxpIn .18s ease;
+}
+.lxSearch__head{
+  display:flex; align-items:center; gap:10px;
+  padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.08);
+  -webkit-app-region:drag;
+}
+.lxSearch__input{
+  flex:1; padding:11px 14px; border-radius:10px; font-size:14px;
+  background:rgba(255,255,255,.07); color:#fff;
+  border:1px solid rgba(255,255,255,.12); outline:none;
+  -webkit-app-region:no-drag;
+}
+.lxSearch__input::placeholder{ color:rgba(255,255,255,.32); }
+.lxSearch__input:focus{ border-color:rgba(135,226,221,.5); }
+.lxSearch__close{
+  width:30px; height:30px; border-radius:50%; border:0; cursor:pointer;
+  background:rgba(255,255,255,.08); color:var(--fg); font-size:14px;
+  -webkit-app-region:no-drag;
+}
+.lxSearch__close:hover{ background:rgba(255,255,255,.16); color:#fff; }
+.lxSearch__body{ flex:1; overflow-y:auto; padding:10px 12px; min-height:190px; }
+.lxSearch__body::-webkit-scrollbar{ width:8px; }
+.lxSearch__body::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.16); border-radius:4px; }
+.lxSearch__foot{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; border-top:1px solid rgba(255,255,255,.08);
+}
+.lxSearch__tip{ color:rgba(255,255,255,.38); font-size:12px; }
+/* 搜索结果行里的按钮要常显（不然发现不了） */
+.lxItem__act.is-always{ opacity:1; display:flex; gap:6px; }
+.lxItem__act.is-always button{ font-size:12px; }
+.lxItem__act.is-always button:hover{ background:rgba(135,226,221,.22); color:var(--track-fill); }
+.lxItem[data-song]{ cursor:pointer; }
 `
 
 function injectStyle() {
@@ -1050,6 +1109,24 @@ const PANEL_HTML = `
   </div>
 </div>
 <div class="lxLyric" id="lxLyric"></div>
+
+<!-- ── 搜索加歌浮层（控制条 ＋ / 顶栏放大镜 / Ctrl+F 打开）── -->
+<div class="lxSearch" id="lxSearch" hidden>
+  <div class="lxSearch__mask" data-sclose="1"></div>
+  <div class="lxSearch__box">
+    <div class="lxSearch__head">
+      <input class="lxSearch__input" id="lxSearchKw" placeholder="搜歌名 / 歌手 / 专辑，回车搜索">
+      <button class="lxSearch__close" data-sclose="1">✕</button>
+    </div>
+    <div class="lxSearch__body" id="lxSearchRes2">
+      <div class="lxEmpty">输入关键词搜索 —— <b>点歌名直接播放</b>，点 ＋ 只加入队列</div>
+    </div>
+    <div class="lxSearch__foot">
+      <button class="lxBtn" id="lxAddLocal">从电脑里添加音乐文件</button>
+      <span class="lxSearch__tip">支持 mp3 / flac / m4a / wav / ogg / ape</span>
+    </div>
+  </div>
+</div>
 `
 
 function injectPanel() {
@@ -1440,14 +1517,9 @@ const ACT = {
     renderFav()
   },
 
-  /* 添加到队列 */
+  /* 添加歌曲 —— 打开搜索浮层（点歌名直接播，点 ＋ 只加入队列） */
   addToQueue() {
-    const song = P.current()
-    if (!song) return
-    S.queue.push(Object.assign({}, song))
-    S.save()
-    renderQueue()
-    toast('已添加到队列末尾')
+    openSearch()
   },
 
   /* 播放模式 */
@@ -1622,10 +1694,117 @@ async function refreshCacheSize() {
   }
 }
 
-/** 搜索（直连酷我，用于找歌加进队列） */
-async function doSearch(kw) {
-  const box = $('#lxSearchRes')
-  if (!box || !kw) return
+/** 打开/关闭搜索加歌浮层 */
+function openSearch() {
+  const el = $('#lxSearch')
+  if (!el) return
+  el.hidden = false
+  setTimeout(() => { const i = $('#lxSearchKw'); if (i) i.focus() }, 30)
+}
+function closeSearch() {
+  const el = $('#lxSearch')
+  if (el) el.hidden = true
+}
+
+/** Windows 路径 → file:// URL（分段编码，盘符不编码） */
+function localFileUrl(p) {
+  const norm = String(p).replace(/\\/g, '/')
+  return 'file:///' + norm.split('/')
+    .map((seg, i) => (i === 0 ? seg : encodeURIComponent(seg)))
+    .join('/')
+}
+
+/** 选本地音乐文件加进队列（不走音源，播放时直接读文件） */
+async function addLocalFiles() {
+  try {
+    const r = await ipcRenderer.invoke(CH.selectDialog, {
+      title: '选择音乐文件（可多选）',
+      properties: ['openFile', 'multiSelections'],
+      filters: [{ name: '音频文件', extensions: ['mp3', 'flac', 'm4a', 'aac', 'wav', 'ogg', 'wma', 'ape'] }],
+    })
+    if (!r || r.canceled || !r.filePaths || !r.filePaths.length) return
+
+    let n = 0
+    for (const p of r.filePaths) {
+      const base = path.basename(p).replace(/\.[^.]+$/, '')
+      let name = base
+      let singer = ''
+      // 常见命名「歌手 - 歌名」拆一下
+      const m = /^(.+?)\s*[-–—]\s*(.+)$/.exec(base)
+      if (m) {
+        singer = m[1].trim()
+        name = m[2].trim()
+      }
+      S.queue.push({ source: 'local', localPath: p, name, singer, albumName: '' })
+      n++
+    }
+    S.save()
+    renderQueue()
+    toast('已加入 ' + n + ' 首本地音乐')
+    closeSearch()
+  } catch (e) {
+    toast('添加失败：' + (e.message || e))
+  }
+}
+
+/**
+ * 搜索结果点击的统一处理。
+ * 点整行 = 加入队列并立即播放；点 ＋ = 只加入队列。
+ * 面板里的搜索和浮层里的搜索共用它。
+ */
+function handleSongListClick(e, boxSel) {
+  const box = $(boxSel)
+  if (!box) return false
+  const item = e.target.closest('[data-song]')
+  if (!item || !box._songs) return false
+  const song = box._songs[Number(item.dataset.song)]
+  if (!song) return false
+  e.stopPropagation()
+
+  if (e.target.closest('[data-queue]')) {
+    S.queue.push(Object.assign({}, song))
+    S.save()
+    renderQueue()
+    toast('已加入队列：' + song.name + '（第 ' + S.queue.length + ' 首）')
+    return true
+  }
+
+  // 立即播放：同时加进队列，否则切歌时队列里没有它、会被跳过
+  S.queue.push(Object.assign({}, song))
+  const idx = S.queue.length - 1
+  S.save()
+  renderQueue()
+  P.playIndex(idx, true)
+  closeSearch()
+  toast('正在播放：' + song.name + '（已加入队列第 ' + (idx + 1) + ' 首）')
+  return true
+}
+
+/** 顶栏加一个放大镜按钮（不动 index.html，直接插进去） */
+function injectTopbarSearch() {
+  const topbar = $('.topbar')
+  if (!topbar || $('#lxTopSearch')) return
+  const btn = document.createElement('button')
+  btn.className = 'topbar__home'
+  btn.id = 'lxTopSearch'
+  btn.setAttribute('aria-label', '搜索加歌')
+  btn.title = '搜索加歌（Ctrl+F）'
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.2"/><path d="m15.2 15.2 4.6 4.6"/></svg>'
+  btn.addEventListener('click', () => openSearch())
+  topbar.insertBefore(btn, topbar.firstChild)
+}
+
+/**
+ * 搜索歌曲（直连酷我）。
+ * boxSel 指向结果容器：浮层用 #lxSearchRes2，设置面板队列页用 #lxSearchRes。
+ */
+async function doSearch(kw, boxSel) {
+  const box = $(boxSel || '#lxSearchRes2')
+  if (!box) return
+  if (!kw) {
+    box.innerHTML = '<div class="lxEmpty">输入歌名或歌手，回车搜索</div>'
+    return
+  }
   box.innerHTML = '<div class="lxEmpty">搜索中…</div>'
   try {
     const url = 'http://search.kuwo.cn/r.s?all=' + encodeURIComponent(kw) +
@@ -1637,19 +1816,22 @@ async function doSearch(kw) {
       return
     }
     box.innerHTML = songs.map((s, i) =>
-      '<div class="lxItem" data-add="' + i + '">' +
+      '<div class="lxItem" data-song="' + i + '">' +
         '<span class="lxItem__idx">' + (i + 1) + '</span>' +
         '<div class="lxItem__main">' +
           '<div class="lxItem__name">' + esc(s.name) + '</div>' +
           '<div class="lxItem__meta">' + esc(s.singer) + (s.albumName ? ' · ' + esc(s.albumName) : '') + '</div>' +
         '</div>' +
-        '<div class="lxItem__act"><button title="加入队列">＋</button></div>' +
+        '<div class="lxItem__act is-always">' +
+          '<button title="加入队列" data-queue>＋</button>' +
+          '<button title="立即播放" data-play>▶</button>' +
+        '</div>' +
       '</div>'
     ).join('')
     box._songs = songs
   } catch (e) {
     console.warn('[lx] 搜索失败', e)
-    box.innerHTML = '<div class="lxEmpty">搜索失败：' + esc(e.message) + '</div>'
+    box.innerHTML = '<div class="lxEmpty">搜索失败：' + esc(e.message || e) + '</div>'
   }
 }
 
@@ -1668,12 +1850,14 @@ function parseKuwoSearch(text) {
     const singer = get('ARTIST')
     const albumName = get('ALBUM')
     if (!songmid || !name) continue
+    const album = cleanEntity(albumName)
     out.push({
       source: 'kw',
       songmid: songmid[1],
       name: cleanEntity(name).replace(/\s*-\s*《[^》]*》.*$/, ''),
       singer: cleanEntity(singer).replace(/\\\\u0026/g, '&').replace(/\s*\/\s*$/, ''),
-      albumName: cleanEntity(albumName),
+      // 酷我对没有专辑信息的条目会返回 '0'，别让它显示成「歌手 · 0」
+      albumName: (album && album !== '0') ? album : '',
     })
     if (out.length >= 20) break
   }
@@ -1865,19 +2049,8 @@ function bindPanel() {
       updateFavIcon()
       return
     }
-    const addIdx = e.target.closest('[data-add]')
-    if (addIdx) {
-      e.stopPropagation()
-      const box = $('#lxSearchRes')
-      const song = box && box._songs ? box._songs[Number(addIdx.dataset.add)] : null
-      if (song) {
-        S.queue.push(song)
-        S.save()
-        renderQueue()
-        toast('已加入队列：' + song.name)
-      }
-      return
-    }
+    // 搜索结果：点歌名播放 / 点 ＋ 加入队列（面板里的搜索也走同一套）
+    if (handleSongListClick(e, '#lxSearchRes')) return
     const playIdx = e.target.closest('[data-play]')
     if (playIdx) {
       e.stopPropagation()
@@ -1959,9 +2132,9 @@ function bindPanel() {
   // 搜索
   const si = $('#lxSearchInput')
   si.addEventListener('keydown', e => {
-    if (e.key === 'Enter') doSearch(si.value.trim())
+    if (e.key === 'Enter') doSearch(si.value.trim(), '#lxSearchRes')
   })
-  $('#lxSearchGo').addEventListener('click', () => doSearch(si.value.trim()))
+  $('#lxSearchGo').addEventListener('click', () => doSearch(si.value.trim(), '#lxSearchRes'))
 
   // 控制页
   $('#lxVolume').addEventListener('input', e => {
@@ -2018,10 +2191,39 @@ function bindPanel() {
   })
 }
 
+function bindSearch() {
+  const el = $('#lxSearch')
+  if (!el) return
+
+  el.addEventListener('click', e => {
+    if (e.target.closest('[data-sclose]')) { closeSearch(); return }
+    handleSongListClick(e, '#lxSearchRes2')
+  })
+
+  const kw = $('#lxSearchKw')
+  if (kw) {
+    kw.addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch(kw.value.trim(), '#lxSearchRes2')
+      if (e.key === 'Escape') { e.stopPropagation(); closeSearch() }
+    })
+  }
+
+  const local = $('#lxAddLocal')
+  if (local) local.addEventListener('click', () => addLocalFiles())
+}
+
 function bindKeyboard() {
   document.addEventListener('keydown', e => {
     const tag = (e.target.tagName || '').toLowerCase()
     if (tag === 'input' || tag === 'textarea') return
+
+    // Ctrl+F 打开搜索加歌
+    if (e.ctrlKey && e.code === 'KeyF') {
+      e.preventDefault()
+      openSearch()
+      return
+    }
+
     switch (e.code) {
       case 'Space':
         e.preventDefault()
@@ -2048,7 +2250,8 @@ function bindKeyboard() {
         renderControls()
         break
       case 'Escape':
-        if (!$('#lxPanel').hidden) closePanel()
+        if (!$('#lxSearch').hidden) closeSearch()
+        else if (!$('#lxPanel').hidden) closePanel()
         else $('#lxLyric').classList.remove('is-on')
         break
       default:
@@ -2180,7 +2383,9 @@ async function boot() {
   bindControlBar()
   bindTopBar()
   bindPanel()
+  bindSearch()
   bindKeyboard()
+  injectTopbarSearch()
 
   renderPlayingInfo()
   renderModeIcons()
@@ -2204,7 +2409,7 @@ async function boot() {
     console.warn('[lx] 音源初始化失败', e)
   }
 
-  window.lxApp = { S, P, lx, ACT, openPanel, closePanel, audio }
+  window.lxApp = { S, P, lx, ACT, openPanel, closePanel, openSearch, closeSearch, addLocalFiles, audio }
   console.log('[lx] 界面逻辑层已就绪。当前队列 ' + S.queue.length + ' 首')
 }
 
