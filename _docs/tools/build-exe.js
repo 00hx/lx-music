@@ -25,7 +25,8 @@ const fs = require('fs')
 const path = require('path')
 
 const ROOT = path.resolve(__dirname, '..', '..')
-const OUT = path.join(ROOT, 'build')
+const OUT = process.env.LX_BUILD_OUT ? path.resolve(ROOT, process.env.LX_BUILD_OUT) : path.join(ROOT, 'build')
+const APP_OUT = path.join(OUT, 'win-unpacked')
 
 const argv = process.argv.slice(2)
 const skipCompile = argv.includes('--no-compile')
@@ -61,6 +62,33 @@ const run = (label, args, filter) => {
   return r.status
 }
 
+// ⚠️ 第一步就先试着清空输出目录，清不掉立刻停。
+//
+// 为什么放在最前面：`build-config/pack.js` 开头有 `del.sync(['dist/**','build/**'])`，
+// 它会连同 build/win-unpacked 一起删。如果你正从 build/win-unpacked 启动程序，
+// 那些 dll 被占用 → 删到一半报 EPERM，**程序目录被删残**，dist 也一起没了。
+// （2026-09-16 真踩过：程序跑了 6 个进程从 build/win-unpacked 启动，打包直接把 dist 和 build 清了。）
+// 所以先探测：清不掉就说明有进程在用，必须让人先关掉程序。
+if (fs.existsSync(OUT)) {
+  console.log('>>> 检查输出目录 ' + OUT)
+  try {
+    fs.rmSync(APP_OUT, { recursive: true, force: true })
+    console.log('    已清空 win-unpacked')
+  } catch (e) {
+    console.error('')
+    console.error('✗ 清不掉 ' + APP_OUT)
+    console.error('  原因: ' + e.code + ' ' + e.message)
+    console.error('')
+    console.error('  最常见的情况：有进程正在使用它 —— 比如你从 build\\win-unpacked\\lx-music-desktop.exe')
+    console.error('  启动了程序。这时**不能继续打包**：编译脚本会先 del build/**，')
+    console.error('  把正在运行的程序目录删残。请先关掉程序再跑。')
+    console.error('')
+    console.error('  想不关程序也出新包，可以换个输出目录：')
+    console.error('    set LX_BUILD_OUT=./build-new && node _docs/tools/build-exe.js')
+    process.exit(1)
+  }
+}
+
 // 1) 编译源码（main + renderer + renderer-scripts）
 if (!skipCompile) {
   if (run('编译（main + renderer + renderer-scripts）', ['build-config/pack.js']) !== 0) {
@@ -79,15 +107,6 @@ const build = (type) => {
     ['build-config/build-pack.js', 'target=win', 'arch=x64', 'type=' + type])
 }
 
-// electron-builder 打包时不会清空 appOutDir，上一轮遗留的文件会被原样带进新包
-// （踩过：移除 extraFiles 里的启动器后，旧包里的 .vbs 还在，因为它是上轮留下的）。
-const APP_OUT = path.join(OUT, 'win-unpacked')
-if (fs.existsSync(APP_OUT)) {
-  console.log('')
-  console.log('>>> 清空 build/win-unpacked（避免上一轮的残留文件混进新包）')
-  fs.rmSync(APP_OUT, { recursive: true, force: true })
-}
-
 let failed = false
 for (const t of targets) {
   if (build(t) !== 0) failed = true
@@ -95,7 +114,7 @@ for (const t of targets) {
 
 // 汇总
 console.log('')
-console.log('════ 产物（build/）════')
+console.log('════ 产物（' + path.relative(ROOT, OUT).split(path.sep).join('/') + '/）════')
 if (fs.existsSync(OUT)) {
   const rows = []
   const walkDir = (dir, rel) => {

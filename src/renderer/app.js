@@ -123,10 +123,8 @@ const DEFAULT_QUEUE = [
 ]
 
 /* ── 社区音源仓库 ──
-   主仓库 https://github.com/pdone/lx-music-source（社区维护，持续更新）。
    直连 raw.githubusercontent.com 在国内多数网络下不通，所以内置几个镜像，
    按顺序试，第一个通的就用。 */
-const SOURCE_REPO = 'https://raw.githubusercontent.com/pdone/lx-music-source/main/'
 const SOURCE_MIRRORS = [
   u => u,
   u => 'https://ghproxy.net/' + u,
@@ -134,18 +132,41 @@ const SOURCE_MIRRORS = [
   u => 'https://ghfast.top/' + u,
 ]
 
-/** 在线可拉取的音源清单（id 就是仓库里的目录名） */
+/** 已知的社区音源仓库。默认仓库是 pdone，其余的要显式写 repo */
+const SOURCE_REPOS = {
+  pdone: ['pdone/lx-music-source', 'main'],
+  guoyue: ['guoyue2010/lxmusic-', 'main'],
+  wangshiyulin: ['wangshiyulin/LXmusic-source', 'main'],
+  jiexiang: ['haonanren118/jiexiang-Music-Source', 'main'],
+}
+
+/**
+ * 在线可拉取的音源清单。
+ *   repo 缺省 = 'pdone'，此时 path 缺省为 `<id>/latest.js`（主仓库的目录约定）
+ *   其他仓库要显式给 path（中文/空格会由 encodeURI 处理）
+ *
+ * hint 里的「实测」结论来自 2026-09-16 的批量实测（每源多轮 × 多首歌，且真去拉了音频字节），
+ * 写清楚是为了免得用户点完才发现是坏的 —— 音源失效是常态，这份清单要定期复核。
+ */
 const ONLINE_SOURCES = [
-  { id: 'sixyin', label: '六音音源', hint: '日常首选，覆盖面广' },
-  { id: 'huibq', label: '汇百泉', hint: '音质好，常能补上别的源搜不到的' },
-  { id: 'flower', label: '野花', hint: '轻量、快' },
-  { id: 'grass', label: '野草', hint: '体积极小，适合备用' },
-  { id: 'ikun', label: 'ikun 音源', hint: '社区活跃' },
-  { id: 'juhe', label: '聚合 API', hint: '多平台聚合' },
-  { id: 'lx', label: '同名 LX 源', hint: '和软件磨合最好' },
-  { id: 'qdy', label: '全豆要聚合', hint: '聚合多条链路' },
-  { id: 'changqing', label: '长青 SVIP', hint: '五平台支持' },
-  { id: 'huanyin', label: '幻音', hint: '轻量' },
+  // ── 实测全过（推荐）──
+  { id: 'changqing', label: '长青SVIP（推荐）', hint: '五平台 · 实测 3 轮全过' },
+  { id: 'juhe', label: '聚合API (CF)', hint: '仅 1KB · 实测全过' },
+  { id: 'lx', label: '独家音源', hint: '洛雪科技 · 实测全过 · 含本地文件' },
+  { id: 'qdy', label: '全豆要聚合', hint: '聚合多链路 · 实测 4/5（个别歌没地址）' },
+  { id: 'flower', label: '野花', hint: '五平台 · 只出 128k' },
+  { id: 'grass', label: '野草', hint: '仅酷我 128k · 体积最小，应急用' },
+  // ── 来自其他社区仓库（都是 2026-09-16 实测全过的）──
+  { repo: 'guoyue', path: 'V260907/墨澜音乐源v2.3.0.js', label: '墨澜聚合', hint: '超聚合多链路 · 实测 2 轮全过' },
+  { repo: 'guoyue', path: 'V260817/推荐/K×H测试 v1.7.17.js', label: 'K×H测试', hint: '实测 2 轮全过' },
+  { repo: 'jiexiang', path: '杰翔音乐源.js', label: '杰翔聚合', hint: '实测 2 轮全过' },
+  { repo: 'wangshiyulin', path: 'xh/xinghai-music-sourcev2.3.13.js', label: '星海音乐源', hint: '实测 2 轮全过' },
+  { repo: 'guoyue', path: 'V260907/念心音源 v1.0.2.js', label: '念心音源', hint: '实测 2 轮全过' },
+  { repo: 'guoyue', path: 'V260907/stellarwave-v3.2.0.js', label: '星澜聚合 (StellarWave)', hint: '实测 2 轮全过 · 支持 flac24bit' },
+  { repo: 'guoyue', path: 'V260907/屿溪-终章.js', label: '屿溪-终章', hint: '实测 2 轮全过' },
+  { repo: 'guoyue', path: 'V260907/lx-玉宁熙V1.2.2.js', label: 'lx-玉宁熙-Pro', hint: '实测 2 轮全过' },
+  { repo: 'guoyue', path: 'V260817/推荐/HYWmusic_beta_公益测试.js', label: 'HYWmusic_beta', hint: '实测 2 轮全过' },
+  { repo: 'guoyue', path: 'V260907/溯音音源_v1.js', label: '溯音音源', hint: '实测 2 轮全过' },
 ]
 
 const STATE_KEY = 'lx-ui-state-v1'
@@ -1291,8 +1312,8 @@ function renderSourceDir() {
 function renderOnlineSources() {
   const box = $('#lxOnlineList')
   if (!box) return
-  box.innerHTML = ONLINE_SOURCES.map(s =>
-    '<div class="lxItem" data-online="' + esc(s.id) + '">' +
+  box.innerHTML = ONLINE_SOURCES.map((s, i) =>
+    '<div class="lxItem" data-online="' + i + '">' +
       '<div class="lxItem__main">' +
         '<div class="lxItem__name">' + esc(s.label) + '</div>' +
         '<div class="lxItem__meta">' + esc(s.hint) + '</div>' +
@@ -2006,15 +2027,16 @@ function bindPanel() {
     const on = e.target.closest('[data-online]')
     if (on) {
       e.stopPropagation()
-      const id = on.dataset.online
-      const meta = ONLINE_SOURCES.find(x => x.id === id)
-      const label = meta ? meta.label : id
+      const idx = Number(on.dataset.online)
+      const meta = ONLINE_SOURCES[idx]
+      if (!meta) return
+      const label = meta.label
       const btn = on.querySelector('button')
       if (on.dataset.busy === '1') return
       on.dataset.busy = '1'
       if (btn) btn.textContent = '…'
       toast('正在下载 ' + label + '…')
-      importOnlineSource(id)
+      importOnlineSource(meta)
         .then(info => {
           toast('已导入并启用：' + info.name)
           renderApiPage()
@@ -2368,9 +2390,16 @@ async function importSourceFile(filePath) {
   return info
 }
 
+/** 把清单项拼成 raw 地址（默认仓库走 `<id>/latest.js` 的目录约定） */
+function onlineSourceUrl(item) {
+  const [repo, branch] = SOURCE_REPOS[item.repo || 'pdone']
+  const p = item.path || (item.id + '/latest.js')
+  return 'https://raw.githubusercontent.com/' + repo + '/' + branch + '/' + encodeURI(p)
+}
+
 /** 从社区仓库拉一个音源脚本（依次试各个镜像，第一个通的就用） */
-async function fetchOnlineSource(id) {
-  const raw = SOURCE_REPO + id + '/latest.js'
+async function fetchOnlineSource(item) {
+  const raw = onlineSourceUrl(item)
   let lastErr = null
   for (const mirror of SOURCE_MIRRORS) {
     try {
@@ -2381,7 +2410,7 @@ async function fetchOnlineSource(id) {
       lastErr = e
     }
   }
-  throw lastErr || new Error('所有线路都不通')
+  throw lastErr || new Error('所有线路都不通（GitHub 直连和三个镜像都失败了）')
 }
 
 /**
@@ -2389,8 +2418,8 @@ async function fetchOnlineSource(id) {
  * 已经装过同名的会先删掉再装 —— 所以同一个按钮点第二次就等于「更新到最新」，
  * 不会在列表里堆出一串重复的源。
  */
-async function importOnlineSource(id) {
-  const txt = await fetchOnlineSource(id)
+async function importOnlineSource(item) {
+  const txt = await fetchOnlineSource(item)
   const name = ((/@name\s+([^\n*]+)/.exec(txt) || [])[1] || '').trim()
 
   if (name) {

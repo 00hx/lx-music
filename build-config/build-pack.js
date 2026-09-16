@@ -27,7 +27,9 @@ const options = {
   },
   directories: {
     buildResources: './resources',
-    output: './build',
+    // 允许用环境变量换输出目录。用途：程序正跑在 build/win-unpacked 里时，
+    // 那个目录被锁住、清不掉，可以让新包先出到别处（LX_BUILD_OUT=./build-new）。
+    output: process.env.LX_BUILD_OUT || './build',
   },
   files: [
     '!node_modules/**/*',
