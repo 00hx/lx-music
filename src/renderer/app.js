@@ -231,7 +231,7 @@ const S = {
   sleepEnd: 0,
   sleepMinutes: 0,
   lastApiId: '',
-  ui: { blur: 0, brightness: 100, playerOpacity: 100, showTopbar: true },
+  ui: { blur: 0, brightness: 100, playerOpacity: 100, showTopbar: true, autoHideBar: true },
 
   load() {
     try {
@@ -732,6 +732,21 @@ const CSS = `
 /* ── 控制条与顶栏始终浮在最上层（歌词面板滑出时也不该盖住它们）── */
 .player, .topbar{ z-index: 75; }
 
+/* ── 控制条自动隐藏 ──
+   默认沉到屏幕外，鼠标进到底部热区再滑上来。
+   隐藏只用 transform，**不动 opacity** —— 那个被「控制条不透明度」设置占着
+   （applyUiSettings 直接写 .player 的 inline style，两处都用 opacity 会打架）。
+   出场用 ease-out（冲上来再缓停），收回用 ease-in（起步慢、越走越快）—— 这是「顺」的关键。
+   注意隐藏时要带上 translateX(-50%)：这个条子本来就靠它水平居中。 */
+.player{
+  transition: transform .46s cubic-bezier(.16,.86,.26,1);
+}
+.player.is-away{
+  transition: transform .3s cubic-bezier(.5,.03,.74,.4);
+  transform: translateX(-50%) translateY(calc(100% + var(--capsule-bottom, 24px) + 18px));
+  pointer-events: none;
+}
+
 /* ── 顶栏可拖窗口（按钮除外）── */
 .topbar{ -webkit-app-region: drag; }
 .topbar button, .topbar__user{ -webkit-app-region: no-drag; }
@@ -1137,6 +1152,13 @@ const PANEL_HTML = `
           <span class="lxRow__label">显示右上角顶栏</span>
           <button class="lxSwitch" id="lxUiTopbar"></button>
         </div>
+        <div class="lxRow">
+          <div>
+            <div class="lxRow__label">控制条自动隐藏</div>
+            <div class="lxRow__hint">鼠标移到窗口底部时滑出来</div>
+          </div>
+          <button class="lxSwitch" id="lxUiAutoHide"></button>
+        </div>
         <div class="lxBtns" style="margin-top:12px">
           <button class="lxBtn" id="lxUiReset">恢复默认</button>
         </div>
@@ -1436,6 +1458,12 @@ function applyUiSettings() {
   if (player) player.style.opacity = String(S.ui.playerOpacity / 100)
   const topbar = $('.topbar')
   if (topbar) topbar.classList.toggle('is-hidden', !S.ui.showTopbar)
+  // 关掉自动隐藏时把条子强行拉回来（不能指望下一次 mousemove）
+  if (player && !S.ui.autoHideBar) {
+    if (barTimer) { clearTimeout(barTimer); barTimer = null }
+    player.classList.remove('is-away')
+    barHidden = false
+  }
 
   const set = (id, textId, val) => {
     const el = $(id)
@@ -1448,6 +1476,8 @@ function applyUiSettings() {
   set('#lxUiOpacity', '#lxUiOpacityText', S.ui.playerOpacity)
   const tb = $('#lxUiTopbar')
   if (tb) tb.classList.toggle('is-on', S.ui.showTopbar)
+  const ab = $('#lxUiAutoHide')
+  if (ab) ab.classList.toggle('is-on', S.ui.autoHideBar)
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -1580,6 +1610,62 @@ function openVolumePopup(anchor) {
   popEl = box
 
   setTimeout(() => document.addEventListener('pointerdown', onDocDown, true), 0)
+}
+
+/* ── 控制条自动隐藏 ──
+   判定就一条：鼠标进了「距底部 BAR_HOT 像素」的热区就滑上来，离开热区且不在条上、没有弹层，
+   延迟 400ms 再收回（给点缓冲，手一抖不至于把条子晃没了）。 */
+const BAR_HOT = 96            // 比控制条本体高一点：鼠标还没碰到底就能看到它升起来
+let barHidden = false
+let barTimer = null
+
+function hidePlayerBar() {
+  const bar = $('.player')
+  if (!bar || barHidden) return
+  bar.classList.add('is-away')
+  barHidden = true
+}
+
+function showPlayerBar() {
+  const bar = $('.player')
+  if (!bar) return
+  if (barTimer) { clearTimeout(barTimer); barTimer = null }
+  if (!barHidden) return
+  bar.classList.remove('is-away')
+  barHidden = false
+}
+
+function initAutoHideBar() {
+  const bar = $('.player')
+  if (!bar) return
+
+  // 开场先露面 1.2 秒再沉下去 —— 一进来就是空屏幕，容易让人以为程序坏了
+  setTimeout(() => {
+    if (S.ui.autoHideBar && !bar.matches(':hover') && !popEl) hidePlayerBar()
+  }, 1200)
+
+  window.addEventListener('mousemove', e => {
+    if (!S.ui.autoHideBar) return
+    if (e.clientY >= window.innerHeight - BAR_HOT) {
+      showPlayerBar()
+      return
+    }
+    if (barHidden) return
+    // 弹层开着（音量/音质）或鼠标还在条子上：别收，不然够不着上面的弹层
+    if (popEl || bar.matches(':hover')) {
+      if (barTimer) { clearTimeout(barTimer); barTimer = null }
+      return
+    }
+    if (barTimer) return
+    barTimer = setTimeout(() => { barTimer = null; hidePlayerBar() }, 400)
+  })
+
+  // 鼠标移出窗口（比如切到别的程序）：直接收起来
+  document.addEventListener('mouseleave', () => {
+    if (!S.ui.autoHideBar || popEl) return
+    if (barTimer) { clearTimeout(barTimer); barTimer = null }
+    hidePlayerBar()
+  })
 }
 
 /** 睡眠定时：控制条上那个时钟按钮已换成音量，现在只被设置面板调用 */
@@ -2275,8 +2361,14 @@ function bindPanel() {
     S.save()
     applyUiSettings()
   })
+  $('#lxUiAutoHide').addEventListener('click', () => {
+    S.ui.autoHideBar = !S.ui.autoHideBar
+    S.save()
+    applyUiSettings()
+    if (S.ui.autoHideBar) toast('鼠标移到窗口底部会弹出控制条')
+  })
   $('#lxUiReset').addEventListener('click', () => {
-    S.ui = { blur: 0, brightness: 100, playerOpacity: 100, showTopbar: true }
+    S.ui = { blur: 0, brightness: 100, playerOpacity: 100, showTopbar: true, autoHideBar: true }
     S.save()
     applyUiSettings()
     renderControls()
@@ -2525,6 +2617,7 @@ async function boot() {
   bindSearch()
   bindKeyboard()
   injectTopbarSearch()
+  initAutoHideBar()
 
   renderPlayingInfo()
   renderModeIcons()
@@ -2548,7 +2641,12 @@ async function boot() {
     console.warn('[lx] 音源初始化失败', e)
   }
 
-  window.lxApp = { S, P, lx, ACT, openPanel, closePanel, openSearch, closeSearch, addLocalFiles, audio }
+  window.lxApp = {
+    S, P, lx, ACT, openPanel, closePanel, openSearch, closeSearch, addLocalFiles, audio,
+    // 控制条自动隐藏的调试出口：回归测试要确定性地驱动它，
+    // 不能靠合成鼠标坐标碰运气（合成事件的 :hover 和真实鼠标不一样）
+    bar: { show: showPlayerBar, hide: hidePlayerBar, isHidden: () => barHidden },
+  }
   console.log('[lx] 界面逻辑层已就绪。当前队列 ' + S.queue.length + ' 首')
 }
 

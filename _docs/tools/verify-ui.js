@@ -55,6 +55,12 @@ const TEST = `(async () => {
   if (!window.lxApp) { R.fatal = 'lxApp 未挂载'; return R }
   const { S, P, lx, audio } = window.lxApp
 
+  // 控制条自动隐藏默认是开的，但会干扰下面「挨个点按钮」的测试（条子会沉下去）。
+  // 所以先关掉、强行拉回来，等所有按钮测完再单独测它。
+  S.ui.autoHideBar = false
+  window.lxApp.bar.show()
+  await nap(200)
+
   // ── 音源：先清掉历史，回到「全新安装」状态，再让 bootstrap 用默认源 ──
   // 否则上一轮验证装过的源会留着，导致每次测的源都不一样、结果不可比
   if (lx.list.length) {
@@ -255,6 +261,57 @@ const TEST = `(async () => {
   }
   q('.lxp__close').click()
 
+  // ── 控制条自动隐藏：默认沉到屏幕外，鼠标靠近底部再滑上来 ──
+  const barEl = q('.player')
+  const barApi = window.lxApp.bar
+  S.ui.autoHideBar = true
+  barApi.hide()
+  await nap(700)
+  R.barHiddenClass = barEl.classList.contains('is-away')
+  R.barOffscreenWhenHidden = barEl.getBoundingClientRect().top >= window.innerHeight - 1
+
+  // 鼠标进底部热区 → 该滑上来
+  window.dispatchEvent(new MouseEvent('mousemove', { clientX: 400, clientY: window.innerHeight - 20, bubbles: true }))
+  await nap(900)
+  R.barSlidesUpOnApproach = !barEl.classList.contains('is-away') &&
+    barEl.getBoundingClientRect().bottom <= window.innerHeight + 1
+
+  // 鼠标离开热区 → 延迟收回
+  window.dispatchEvent(new MouseEvent('mousemove', { clientX: 400, clientY: 80, bubbles: true }))
+  await nap(1400)
+  R.barHidesAfterLeave = barEl.classList.contains('is-away')
+
+  // 弹层开着时不能收（不然够不着音量/音质菜单）
+  barApi.show()
+  await nap(300)
+  q('.btn--std').click()
+  await nap(400)
+  R.popupOpenForBarTest = !!q('.lxPop')
+  window.dispatchEvent(new MouseEvent('mousemove', { clientX: 400, clientY: 80, bubbles: true }))
+  await nap(1300)
+  R.barStaysWhilePopupOpen = !barEl.classList.contains('is-away')
+  document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+  await nap(300)
+  R.popupClosedForBarTest = !q('.lxPop')
+
+  // 设置面板里的开关：关掉后条子应立刻保持显示
+  window.lxApp.openPanel('ui')
+  await nap(400)
+  const sw = q('#lxUiAutoHide')
+  R.autoHideSwitchExists = !!sw
+  if (sw) {
+    barApi.hide()
+    await nap(400)
+    sw.click()
+    await nap(500)
+    R.switchOffRestoresBar = !barEl.classList.contains('is-away') && !sw.classList.contains('is-on')
+    sw.click()
+    await nap(400)
+    R.switchBackOn = sw.classList.contains('is-on')
+  }
+  q('.lxp__close').click()
+  await nap(300)
+
   audio.pause()
   R.errors = errs
   return R
@@ -309,6 +366,18 @@ app.whenReady().then(async () => {
   log(JSON.stringify(res, null, 2))
 
   fs.mkdirSync(SHOT_DIR, { recursive: true })
+
+  // 截图 0：控制条沉下去的样子
+  try {
+    await win.webContents.executeJavaScript("window.lxApp.S.ui.autoHideBar = true; window.lxApp.bar.hide(); true")
+    await wait(900)
+    fs.writeFileSync(path.join(SHOT_DIR, 'shot-bar-hidden.png'), (await win.webContents.capturePage()).toPNG())
+    log('截图: _docs/screenshots/shot-bar-hidden.png')
+    // 后面几张图要让条子露着，先恢复
+    await win.webContents.executeJavaScript("window.lxApp.S.ui.autoHideBar = false; window.lxApp.bar.show(); true")
+    await wait(600)
+  } catch (e) { log('截图失败: ' + e.message) }
+
   try {
     await win.webContents.executeJavaScript("document.querySelector('.lxLyric').classList.add('is-on'); true")
     await wait(700)
