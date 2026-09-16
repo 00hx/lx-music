@@ -12,7 +12,10 @@ const isDev = process.env.NODE_ENV === 'development'
 module.exports = {
   target: 'electron-renderer',
   entry: {
-    renderer: path.join(__dirname, '../../src/renderer/main.ts'),
+    // 用 .js 而非 .ts 作入口：界面是自包含的 index.html，不需要打包任何 TS。
+    // 用 .ts 作入口会触发 ts-loader 的全项目类型检查，而 tsconfig.json 里的 paths
+    // 映射是注释掉的（ts-loader 又不认 webpack 的 alias），会报出一堆 @common/* 找不到。
+    renderer: path.join(__dirname, '../../src/renderer/main.js'),
   },
   output: {
     filename: '[name].js',
@@ -134,6 +137,9 @@ module.exports = {
     new HTMLPlugin({
       filename: 'index.html',
       template: path.join(__dirname, '../../src/renderer/index.html'),
+      // 界面是自包含的单文件 HTML（样式与脚本全部内联），
+      // 不需要注入任何打包产物，所以关掉自动注入
+      inject: false,
       isProd: process.env.NODE_ENV == 'production',
       browser: process.browser,
       __dirname,

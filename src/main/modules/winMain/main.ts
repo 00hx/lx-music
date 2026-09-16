@@ -95,7 +95,8 @@ export const createWindow = () => {
       nodeIntegration: true,
       sandbox: false,
       enableWebSQL: false,
-      webgl: false,
+      // 界面用 three.js 做粒子星云背景，必须允许 WebGL（原值为 false）
+      webgl: true,
       spellcheck: false, // 禁用拼写检查器
     },
   }
