@@ -231,6 +231,10 @@ const S = {
   sleepEnd: 0,
   sleepMinutes: 0,
   lastApiId: '',
+  // 音源健康档案：{ [源id]: { ok, fail, lastOk, lastFail } }
+  // 用来在源挂掉时自动挑一个还能用的 —— 音源对外是别人的服务器，随时会失效，
+  // 靠档案记住「哪个源最近靠谱」，比每次都从列表第一个开始试靠谱得多。
+  apiHealth: {},
   ui: { blur: 0, brightness: 100, playerOpacity: 100, showTopbar: true, autoHideBar: true },
 
   load() {
@@ -246,6 +250,7 @@ const S = {
       if (Array.isArray(o.favorites)) this.favorites = o.favorites
       if (typeof o.space === 'boolean') this.space = o.space
       if (typeof o.lastApiId === 'string') this.lastApiId = o.lastApiId
+      if (o.apiHealth && typeof o.apiHealth === 'object') this.apiHealth = o.apiHealth
       if (o.ui) Object.assign(this.ui, o.ui)
     } catch (e) {
       console.warn('[lx] 读取本地状态失败，用默认值', e)
@@ -263,6 +268,7 @@ const S = {
         favorites: this.favorites,
         space: this.space,
         lastApiId: this.lastApiId,
+        apiHealth: this.apiHealth,
         ui: this.ui,
       }))
     } catch (e) {
@@ -372,7 +378,16 @@ const lx = {
       console.warn('[lx] 读取音源列表失败', e)
     }
 
-    const pick = list.find(a => a.id === S.lastApiId) || list[0]
+    // 挑源：默认沿用上次那个；但它最近老失败（健康分低）就改用评分最高的
+    let pick = list.find(a => a.id === S.lastApiId) || null
+    const best = rankApis('')[0]
+    if (best && apiScore(best.id) > (pick ? apiScore(pick.id) : -Infinity)) {
+      if (pick && pick.id !== best.id) {
+        console.log('[lx] 上次用的「' + pick.name + '」最近常失败，改用更稳的「' + best.name + '」')
+      }
+      pick = best
+    }
+    pick = pick || list[0]
     if (pick) {
       await this.enable(pick.id)
       return
@@ -432,7 +447,14 @@ const P = {
   },
 
   /** 播放第 index 首 */
-  async playIndex(i, autoplay) {
+  /**
+   * @param isRetry      内部重试标记。为 true 时不重置「自动换源计数」，
+   *                     这样一首歌累计最多换 MAX_API_SWITCH 个源，不会无限打转。
+   * @param forceQuality 强制用某个音质。失败重试时传 '128k' —— 实测高音质
+   *                     （320k / flac）的地址失效率明显更高，降一档往往就通了。
+   */
+  async playIndex(i, autoplay, isRetry, forceQuality) {
+    if (!isRetry) apiSwitchCount = 0
     if (!S.queue.length) {
       toast('播放队列是空的')
       return
@@ -445,41 +467,64 @@ const P = {
     if (song.source !== 'local') {
       const ok = await lx.ready(15000)
       if (!ok) {
+        // 源起不来，直接换一个再试，别让用户干等
+        const nm = await autoSwitchSource('音源没响应')
+        if (nm) return this.playIndex(i, autoplay, true)
         setPlayingState(false)
-        toast('音源还没就绪，稍等几秒再点')
+        toast('音源都没反应，到房子按钮里加个新音源')
         return
       }
     }
 
+    const wantQuality = forceQuality || S.quality
     let url = null
     if (song.source === 'local' && song.localPath) {
       // 本地文件不经过音源，直接读盘
       url = localFileUrl(song.localPath)
     } else {
       try {
-        url = await lx.url(song, S.quality)
+        url = await lx.url(song, wantQuality)
       } catch (e) {
         console.warn('[lx] 取地址失败', e)
       }
-      if (!url && S.quality !== '128k') {
+      if (!url && wantQuality !== '128k') {
         // 高音质拿不到就退回标准音质再试一次
         const fallback = '128k'
-        console.warn('[lx] ' + S.quality + ' 拿不到地址，回退 ' + fallback)
+        console.warn('[lx] ' + wantQuality + ' 拿不到地址，回退 ' + fallback)
         try {
           url = await lx.url(song, fallback)
         } catch (e) { /* 忽略 */ }
-        if (url) toast('该音源没有这个音质，已回退标准音质')
+        if (url && !forceQuality) toast('该音源没有这个音质，已回退标准音质')
       }
+    }
+
+    // 拿不到地址 → 换一个源，用同一首歌再试
+    if (!url && song.source !== 'local') {
+      const nm = await autoSwitchSource('拿不到播放地址')
+      if (nm) return this.playIndex(i, autoplay, true)
     }
 
     if (!url) {
       setPlayingState(false)
-      toast('这首歌拿不到播放地址，去房子按钮里换个音源试试')
+      toast('这首歌拿不到播放地址，几个音源都试过了')
       return
     }
 
+    scoredThisPlay = false
+    lastHandledSrc = ''        // 换新地址了，允许对它重新判定
+
+    // 换地址前必须先把播放器清干净。
+    // audio.error 不会自动清空：上一次失败留下的 code=3 会一直挂着，等新地址刚设上、
+    // 还没加载完时，handleBadSource 一检查就看到「有 error 且播放位置是 0」，于是判定
+    // 新源也是坏的、接着换下一个 —— 结果连续换掉五六个源，一个都播不出来。
+    // （踩过：同样的地址直接给 audio 播得好好的，走这套逻辑就全军覆没。）
+    clearing = true
+    dlog('PLAY src=…' + String(url).slice(-38))
+    // 不调 pause()/load()：设 src 本身就会中止上一次播放并开始加载新的，
+    // 多调这两个反而把播放器搞进一种「有数据但就是不走」的状态。
     audio.src = url
     audio.volume = S.volume
+    setTimeout(() => { clearing = false }, 600)
     if (autoplay !== false) safePlay(1)
 
     if (song.source !== 'local') this.loadLyric(song)
@@ -604,7 +649,81 @@ audio.addEventListener('timeupdate', () => {
 
 audio.addEventListener('durationchange', renderTime)
 
-/** 连续加载失败计数，用来保险丝式地避免整队列都废时无限跳歌 */
+/* ════════════════════════════════════════════════════════════
+   音源自动切换
+   音源是别人的服务器，随时会挂（实测：长青SVIP 的中转机一夜之间全返回 502）。
+   所以不能让用户手动换 —— 程序自己记住哪个源靠谱，当前源不行就跳到下一个。
+   ════════════════════════════════════════════════════════════ */
+
+/** 给某个源记一笔账。ok=true 说明它确实把歌放出来了 */
+function markApi(id, ok) {
+  if (!id) return
+  const h = S.apiHealth[id] || (S.apiHealth[id] = { ok: 0, fail: 0, lastOk: 0, lastFail: 0 })
+  if (ok) { h.ok++; h.lastOk = Date.now() } else { h.fail++; h.lastFail = Date.now() }
+  S.save()
+}
+
+/** 健康分：成一次加 1，挂一次扣 3（宁可错杀，也别老去试一个已经证明不行的） */
+function apiScore(id) {
+  const h = S.apiHealth[id]
+  if (!h) return 0
+  const fresh = (Date.now() - (h.lastOk || 0)) < 30 * 60 * 1000 ? 2 : 0
+  return (h.ok || 0) - (h.fail || 0) * 3 + fresh
+}
+
+/** 当前生效的源 id */
+function curApiId() {
+  return (lx.current && lx.current.id) || S.lastApiId || ''
+}
+
+/** 按健康度从高到低排出候选（可以排除当前这个） */
+function rankApis(excludeId) {
+  return lx.list
+    .filter(a => a.id !== excludeId)
+    .slice()
+    .sort((a, b) => apiScore(b.id) - apiScore(a.id))
+}
+
+/**
+ * 同一首歌最多自动换几个源。
+ * 实测音源会成片失效（一次挂掉三四个很常见），给 4 次机会才够找到能用的；
+ * 每次切换约 5-10 秒（关旧窗口 + 开新窗口 + 等初始化），再多了用户等不起。
+ */
+const MAX_API_SWITCH = 4
+let apiSwitchCount = 0
+
+/**
+ * 当前源不行 → 自己跳到下一个还能用的源。
+ * 换成功返回新源名，都试遍了返回 null。
+ */
+async function autoSwitchSource(reason) {
+  if (apiSwitchCount >= MAX_API_SWITCH) return null
+  const from = curApiId()
+  if (from) markApi(from, false)
+
+  for (const a of rankApis(from).slice(0, MAX_API_SWITCH - apiSwitchCount)) {
+    apiSwitchCount++
+    try {
+      toast(reason + '，自动换到「' + a.name + '」')
+      dlog('SWITCH 尝试启用 ' + a.name)
+      await lx.enable(a.id)
+      const ok = await lx.ready(12000)
+      dlog('SWITCH ' + a.name + ' ready=' + ok)
+      if (ok) {
+        console.log('[lx] 已自动切换到音源：' + a.name)
+        if (typeof renderApiPage === 'function') renderApiPage()
+        return a.name
+      }
+      markApi(a.id, false)   // 这个源也起不来，记上
+    } catch (e) {
+      console.warn('[lx] 切换音源失败：' + a.name, e)
+      markApi(a.id, false)
+    }
+  }
+  return null
+}
+
+/** 连加载失败计数，用来保险丝式地避免整队列都废时无限跳歌 */
 let badCount = 0
 /** 冷却截止时间：连续失败到达上限后，短时间内不再自动跳歌，免得来回刷 */
 let badCooldown = 0
@@ -612,7 +731,23 @@ let badCooldown = 0
 audio.addEventListener('play', () => setPlayingState(true))
 audio.addEventListener('pause', () => setPlayingState(false))
 audio.addEventListener('ended', () => P.next(false))
-audio.addEventListener('canplay', () => { badCount = 0 })
+/**
+ * 这一首是否已确认「真的出声了」。
+ *
+ * 不能用 canplay 当成功标准 —— 坏地址（比如音源服务器返回 502 的 HTML 错误页）也会让
+ * readyState 到 HAVE_CURRENT_DATA 从而触发 canplay，紧接着才真正解码失败。若在 canplay
+ * 里把失败计数清零，就永远清零→重取→清零，压根到不了「换源」的阈值。
+ * （踩过：源已经全挂，程序却傻傻重取了 60 秒。）
+ * 真正的成功以「播放位置确实往前走了」为准。
+ */
+let scoredThisPlay = false
+audio.addEventListener('timeupdate', () => {
+  if (scoredThisPlay || audio.currentTime < 1) return
+  scoredThisPlay = true
+  badCount = 0
+  badCooldown = 0
+  markApi(curApiId(), true)
+})
 
 // 加载失败时也同步按钮状态；真正的“坏源”判定统一走 handleBadSource，
 // 因为切歌时旧的加载会被中断并同样抛出 error，在事件里直接判定容易误伤。
@@ -634,18 +769,42 @@ audio.addEventListener('error', () => {
  * 给坏地址，所以重取一次命中率很高。用户点了《稻香》就该听到《稻香》，而不是被莫名
  * 换到别的歌。（踩过：只等 1.3 秒且不看 audio.error，首次播放被误判成坏源连跳两首。）
  */
+/** 上一处已经处理过的坏地址：同一个地址 error 会连着触发，别重复计数 */
+let lastHandledSrc = ''
+/** 正在切换地址（清空播放器状态）中：这期间的 error 是清状态带出来的，不算数 */
+let clearing = false
+
+/** 故障诊断流水账（测试用，最多留 300 条） */
+const diagLog = []
+const dlog = m => {
+  diagLog.push(new Date().toISOString().slice(11, 19) + ' ' + m)
+  if (diagLog.length > 300) diagLog.shift()
+}
+
 function handleBadSource() {
   const srcAtFail = audio.src
+  if (clearing) { dlog('BAD 跳过（切地址中，是清状态带出来的）'); return }
+  dlog('BAD 触发  src=…' + String(srcAtFail).slice(-38))
+  if (srcAtFail === lastHandledSrc) { dlog('BAD 跳过（同地址已处理过）'); return }
+  lastHandledSrc = srcAtFail
   setPlayingState(false)
-  setTimeout(() => {
+  setTimeout(async () => {
     if (audio.src !== srcAtFail) return            // 期间已经换歌了
     const err = audio.error
     if (!err) return                               // 没有真实错误 → 刚才只是抖动
     if (err.code === 1) return                     // MEDIA_ERR_ABORTED：主动中断，不算故障
-    if (audio.readyState >= 2) return              // 已经能播了
+    // 判据必须是「播放位置真的往前走了」。
+    // readyState 不可靠：音源返回一个 502 的 HTML 错误页时，数据照样下载完，
+    // readyState 能到 4，但解码失败（MediaError code=3），歌根本出不来声。
+    // 用 readyState>=2 当「已经能播」会把这种真故障当成没事，程序就一直傻等。
+    if (audio.currentTime > 0.5) {
+      dlog('BAD 跳过（已播 ' + audio.currentTime.toFixed(2) + 's，是真的能播）')
+      return
+    }
 
     badCount++
     const song = P.current()
+    dlog('BAD 判定成立 badCount=' + badCount + ' 歌=' + (song ? song.name : '?'))
     console.warn('[lx] 音频地址不可用（MediaError code=' + err.code + '），第 ' + badCount + ' 次')
 
     if (Date.now() < badCooldown) {
@@ -653,23 +812,36 @@ function handleBadSource() {
       return
     }
 
-    // 第一次：原地重取地址，尽量把用户点的这首放出来
+    // 第一次：原地重取，并降为标准音质。聚合源内部有多条链路，重取命中率很高
     if (badCount === 1 && song) {
+      dlog('RETRY 原地重取（降 128k）')
       toast('地址失效，重新获取…')
-      P.playIndex(S.index, true)
+      P.playIndex(S.index, true, true, '128k')
       return
     }
 
-    // 仍然不行：自动换下一首（带保险丝，避免整队列都废时无限跳）
-    if (badCount <= 3 && S.queue.length > 1) {
+    // 重取还不行 → 这个源确实废了，自动跳到下一个能用的源，用同一首歌再试
+    if (badCount <= MAX_API_SWITCH + 1 && song && song.source !== 'local') {
+      dlog('SWITCH 准备换源（badCount=' + badCount + '）')
+      const nm = await autoSwitchSource('这个音源放不出来')
+      dlog('SWITCH 结果=' + (nm || '全部失败'))
+      if (nm) {
+        P.playIndex(S.index, true, true, '128k')
+        return
+      }
+    }
+
+    // 源都试遍了才动歌：用户点的就是这首，能救就别换
+    if (badCount <= MAX_API_SWITCH + 2 && S.queue.length > 1) {
       toast('这首实在放不出来，自动换下一首')
       setTimeout(() => P.next(true), 300)
     } else {
       badCount = 0
       badCooldown = Date.now() + 30000
-      toast('连续几首都播不了，到房子按钮里换个音源试试')
+      toast('歌和音源都试遍了，过会儿再试，或到房子按钮里加个新音源')
     }
-  }, 2500)
+    // 4 秒：地址从开始加载到能出声通常要 1-2 秒，判太快会把「还在加载」当成失败
+  }, 4000)
 }
 
 function setPlayingState(isPlaying) {
@@ -907,6 +1079,15 @@ const CSS = `
   background:rgba(255,255,255,.1); color:var(--fg); font-size:13px;
 }
 .lxItem__act button:hover{ background:rgba(255,110,110,.24); color:#ffb3b3; }
+/* 音源健康度标签：程序自动记每个源的成败，稳的排前面 */
+.lxItem__side{ flex:0 0 auto; display:flex; align-items:center; margin-right:8px; }
+.lxApiTag{
+  font-size:11px; padding:2px 8px; border-radius:999px; white-space:nowrap;
+  color:rgba(255,255,255,.5); background:rgba(255,255,255,.07);
+}
+.lxApiTag.is-good{ color:#6fe8c8; background:rgba(111,232,200,.12); }
+.lxApiTag.is-mid{ color:#f0d183; background:rgba(240,209,131,.12); }
+.lxApiTag.is-bad{ color:#ff9d9d; background:rgba(255,110,110,.13); }
 .lxEmpty{ padding:14px; color:rgba(255,255,255,.3); font-size:12.5px; text-align:center; }
 
 /* 滑块 */
@@ -1303,13 +1484,27 @@ function renderApiPage() {
     listEl.innerHTML = '<div class="lxEmpty">还没有音源。点上面的「选择文件导入」挑一个 .js 脚本</div>'
     return
   }
-  listEl.innerHTML = lx.list.map(a => {
+  listEl.innerHTML = lx.list
+    .slice()
+    .sort((x, y) => apiScore(y.id) - apiScore(x.id))   // 靠谱的排前面
+    .map(a => {
     const on = (cur && a.id === cur.id)
+    const h = S.apiHealth[a.id]
+    let tag = '未测'
+    let cls = 'lxApiTag'
+    if (h && (h.ok || h.fail)) {
+      const rate = h.ok + h.fail ? Math.round(h.ok / (h.ok + h.fail) * 100) : 0
+      tag = '成 ' + h.ok + ' / 败 ' + h.fail
+      if (rate >= 70) { tag += ' ✓稳'; cls += ' is-good' }
+      else if (rate >= 30) { tag += ' ~一般'; cls += ' is-mid' }
+      else { tag += ' ✗常挂'; cls += ' is-bad' }
+    }
     return '<div class="lxItem' + (on ? ' is-on' : '') + '" data-id="' + esc(a.id) + '">' +
       '<div class="lxItem__main">' +
         '<div class="lxItem__name">' + esc(a.name || '未命名') + (a.version ? ' v' + esc(a.version) : '') + '</div>' +
         '<div class="lxItem__meta">' + esc(a.author || '佚名') + (a.description ? ' · ' + esc(a.description) : '') + '</div>' +
       '</div>' +
+      '<div class="lxItem__side"><span class="' + cls + '" title="程序自动记录的成败次数，放不出来会自动换源">' + tag + '</span></div>' +
       '<div class="lxItem__act"><button data-remove="' + esc(a.id) + '" title="删除">✕</button></div>' +
     '</div>'
   }).join('')
@@ -2646,6 +2841,15 @@ async function boot() {
     // 控制条自动隐藏的调试出口：回归测试要确定性地驱动它，
     // 不能靠合成鼠标坐标碰运气（合成事件的 :hover 和真实鼠标不一样）
     bar: { show: showPlayerBar, hide: hidePlayerBar, isHidden: () => barHidden },
+    // 音源自动切换的调试出口：让测试能读到健康档案，并造一个「坏源」来触发切换
+    api: {
+      health: () => S.apiHealth,
+      score: apiScore,
+      rank: () => rankApis('').map(a => ({ id: a.id, name: a.name, score: apiScore(a.id) })),
+      switchCount: () => apiSwitchCount,
+      mark: markApi,
+      log: () => diagLog,
+    },
   }
   console.log('[lx] 界面逻辑层已就绪。当前队列 ' + S.queue.length + ' 首')
 }
