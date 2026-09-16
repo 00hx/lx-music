@@ -122,6 +122,32 @@ const DEFAULT_QUEUE = [
   { source: 'kw', songmid: '26445261', name: '起风了', singer: '买辣椒也用券', albumName: '起风了' },
 ]
 
+/* ── 社区音源仓库 ──
+   主仓库 https://github.com/pdone/lx-music-source（社区维护，持续更新）。
+   直连 raw.githubusercontent.com 在国内多数网络下不通，所以内置几个镜像，
+   按顺序试，第一个通的就用。 */
+const SOURCE_REPO = 'https://raw.githubusercontent.com/pdone/lx-music-source/main/'
+const SOURCE_MIRRORS = [
+  u => u,
+  u => 'https://ghproxy.net/' + u,
+  u => 'https://gh-proxy.com/' + u,
+  u => 'https://ghfast.top/' + u,
+]
+
+/** 在线可拉取的音源清单（id 就是仓库里的目录名） */
+const ONLINE_SOURCES = [
+  { id: 'sixyin', label: '六音音源', hint: '日常首选，覆盖面广' },
+  { id: 'huibq', label: '汇百泉', hint: '音质好，常能补上别的源搜不到的' },
+  { id: 'flower', label: '野花', hint: '轻量、快' },
+  { id: 'grass', label: '野草', hint: '体积极小，适合备用' },
+  { id: 'ikun', label: 'ikun 音源', hint: '社区活跃' },
+  { id: 'juhe', label: '聚合 API', hint: '多平台聚合' },
+  { id: 'lx', label: '同名 LX 源', hint: '和软件磨合最好' },
+  { id: 'qdy', label: '全豆要聚合', hint: '聚合多条链路' },
+  { id: 'changqing', label: '长青 SVIP', hint: '五平台支持' },
+  { id: 'huanyin', label: '幻音', hint: '轻量' },
+]
+
 const STATE_KEY = 'lx-ui-state-v1'
 
 /* ════════════════════════════════════════════════════════════
@@ -927,6 +953,8 @@ const PANEL_HTML = `
         <div class="lxList" id="lxApiList"></div>
         <div class="lxp__sub" id="lxDirTitle">音源目录</div>
         <div class="lxList" id="lxDirList"></div>
+        <div class="lxp__sub">在线音源 · 点一下就下载并导入（社区仓库，自动走镜像；已装过的再点就是更新）</div>
+        <div class="lxList" id="lxOnlineList"></div>
       </div>
 
       <!-- ── 队列 ── -->
@@ -1178,6 +1206,21 @@ function renderSourceDir() {
         '<div class="lxItem__meta">' + (f.size / 1024).toFixed(1) + ' KB</div>' +
       '</div>' +
       '<div class="lxItem__act"><button title="导入并启用">＋</button></div>' +
+    '</div>'
+  ).join('')
+}
+
+/** 音源页最下面：在线音源清单（来自社区仓库，点一下就从网上下载并导入） */
+function renderOnlineSources() {
+  const box = $('#lxOnlineList')
+  if (!box) return
+  box.innerHTML = ONLINE_SOURCES.map(s =>
+    '<div class="lxItem" data-online="' + esc(s.id) + '">' +
+      '<div class="lxItem__main">' +
+        '<div class="lxItem__name">' + esc(s.label) + '</div>' +
+        '<div class="lxItem__meta">' + esc(s.hint) + '</div>' +
+      '</div>' +
+      '<div class="lxItem__act"><button title="下载并导入">⤓</button></div>' +
     '</div>'
   ).join('')
 }
@@ -1775,6 +1818,31 @@ function bindPanel() {
       return
     }
 
+    // 在线音源：从社区仓库下载并导入
+    const on = e.target.closest('[data-online]')
+    if (on) {
+      e.stopPropagation()
+      const id = on.dataset.online
+      const meta = ONLINE_SOURCES.find(x => x.id === id)
+      const label = meta ? meta.label : id
+      const btn = on.querySelector('button')
+      if (on.dataset.busy === '1') return
+      on.dataset.busy = '1'
+      if (btn) btn.textContent = '…'
+      toast('正在下载 ' + label + '…')
+      importOnlineSource(id)
+        .then(info => {
+          toast('已导入并启用：' + info.name)
+          renderApiPage()
+        })
+        .catch(err => toast('下载失败：' + (err.message || err)))
+        .finally(() => {
+          on.dataset.busy = ''
+          if (btn) btn.textContent = '⤓'
+        })
+      return
+    }
+
     // 队列
     const del = e.target.closest('[data-delqueue]')
     if (del) {
@@ -2061,6 +2129,47 @@ async function importSourceFile(filePath) {
   return info
 }
 
+/** 从社区仓库拉一个音源脚本（依次试各个镜像，第一个通的就用） */
+async function fetchOnlineSource(id) {
+  const raw = SOURCE_REPO + id + '/latest.js'
+  let lastErr = null
+  for (const mirror of SOURCE_MIRRORS) {
+    try {
+      const txt = await httpGet(mirror(raw), 'https://github.com/')
+      if (/@name/.test(txt)) return txt
+      lastErr = new Error('拿到的不是音源脚本')
+    } catch (e) {
+      lastErr = e
+    }
+  }
+  throw lastErr || new Error('所有线路都不通')
+}
+
+/**
+ * 从在线仓库导入并启用一个音源。
+ * 已经装过同名的会先删掉再装 —— 所以同一个按钮点第二次就等于「更新到最新」，
+ * 不会在列表里堆出一串重复的源。
+ */
+async function importOnlineSource(id) {
+  const txt = await fetchOnlineSource(id)
+  const name = ((/@name\s+([^\n*]+)/.exec(txt) || [])[1] || '').trim()
+
+  if (name) {
+    const olds = lx.list.filter(a => a.name === name)
+    if (olds.length) {
+      await lx.remove(olds.map(a => a.id))
+      if (olds.some(o => lx.current && o.id === lx.current.id)) {
+        lx.state = 'loading'
+        lx.current = null
+      }
+    }
+  }
+
+  const info = await lx.import(txt)
+  await lx.enable(info.id)
+  return info
+}
+
 async function boot() {
   S.load()
   injectStyle()
@@ -2077,6 +2186,7 @@ async function boot() {
   renderModeIcons()
   renderControls()
   renderApiPage()
+  renderOnlineSources()
   renderQueue()
   renderLyric()
 

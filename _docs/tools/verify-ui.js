@@ -176,6 +176,23 @@ const TEST = `(async () => {
   R.blurAfterReset = q('#c').style.filter || '(空)'
   q('.lxp__close').click()
 
+  // ── 在线音源：点第一个，验证能否真从社区仓库下载并导入 ──
+  window.lxApp.openPanel('api')
+  await nap(400)
+  R.onlineCount = qa('#lxOnlineList .lxItem').length
+  if (R.onlineCount) {
+    const before = lx.list.length
+    qa('#lxOnlineList .lxItem')[0].click()
+    for (let i = 0; i < 60; i++) {
+      await nap(500)
+      if (lx.list.length > before) break
+    }
+    R.onlineImported = lx.list.length > before
+    R.apiListAfterOnline = lx.list.length
+    R.currentAfterOnline = lx.current ? lx.current.name : null
+  }
+  q('.lxp__close').click()
+
   audio.pause()
   R.errors = errs
   return R
