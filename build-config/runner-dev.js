@@ -184,7 +184,11 @@ function startElectron() {
     args = args.concat(process.argv.slice(2))
   }
 
-  electronProcess = spawn(electron, args)
+  // 本机全局设了 ELECTRON_RUN_AS_NODE=1，会让子进程里的 Electron 退化成 Node 模式，
+  // 表现为窗口不出现、报 Cannot read properties of undefined。这里显式剔除再 spawn。
+  const childEnv = { ...process.env }
+  delete childEnv.ELECTRON_RUN_AS_NODE
+  electronProcess = spawn(electron, args, { env: childEnv })
 
   electronProcess.stdout.on('data', data => {
     electronLog(data, 'blue')

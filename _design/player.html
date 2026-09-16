@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LX Music · 全屏播放界面原型</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: #101016;
+    padding: 24px;
+    font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  }
+
+  /* 舞台：16:9，内部所有尺寸用 cqw（= 容器宽度的 1%）等比缩放 */
+  .stage {
+    position: relative;
+    width: min(96vw, 1440px);
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    overflow: hidden;
+    container-type: inline-size;
+    color: #fff;
+    user-select: none;
+  }
+
+  /* ── 第一层：背景图 ── */
+  .bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 58% 54% at 63% 36%, rgba(129, 92, 214, .52), transparent 62%),
+      radial-gradient(ellipse 50% 46% at 26% 72%, rgba(58, 96, 190, .36), transparent 60%),
+      radial-gradient(ellipse 42% 42% at 84% 82%, rgba(176, 68, 148, .20), transparent 60%),
+      linear-gradient(158deg, #0b0a14 0%, #191330 46%, #09080f 100%);
+  }
+  .bg::after {
+    content: '背景图占位 · 你给的图放这一层（铺满）';
+    position: absolute; right: 2.2cqw; bottom: 1.4cqw;
+    font-size: .95cqw; color: rgba(255,255,255,.26);
+  }
+
+  /* ── 第二层：顶栏 ── */
+  .back {
+    position: absolute; left: 2.4cqw; top: 2.2cqw;
+    width: 3.2cqw; height: 3.2cqw;
+    display: grid; place-items: center;
+    border: none; border-radius: 50%;
+    background: rgba(255,255,255,.1);
+    backdrop-filter: blur(14px);
+    color: #fff; cursor: pointer;
+    font-size: 1.8cqw; line-height: 1;
+    padding-bottom: .35cqw;
+  }
+  .back:hover { background: rgba(255,255,255,.18); }
+
+  .account {
+    position: absolute; right: 2.4cqw; top: 2.2cqw;
+    display: flex; align-items: center; gap: .7cqw;
+    padding: .5cqw 1.1cqw .5cqw .5cqw;
+    border-radius: 999px;
+    background: rgba(255,255,255,.1);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,.14);
+  }
+  .avatar {
+    width: 2.2cqw; height: 2.2cqw; border-radius: 50%;
+    background: linear-gradient(140deg, #b9a6ff, #6f8ce0);
+  }
+  .account .name { font-size: 1.05cqw; letter-spacing: .01em; }
+  .account .vip {
+    font-size: .8cqw; font-weight: 600;
+    padding: .12cqw .5cqw; border-radius: .35cqw;
+    background: linear-gradient(120deg, #ffd98a, #e8a94b);
+    color: #4a2f05;
+  }
+
+  /* ── 第三层：歌词（斜排 + 当前行高亮）── */
+  .lyrics {
+    position: absolute;
+    left: 12cqw; top: 14cqw;
+    transform: rotate(-6.5deg);
+    transform-origin: 0 0;
+    display: flex; flex-direction: column; gap: 1cqw;
+  }
+  .line {
+    white-space: nowrap;
+    font-size: 1.5cqw;
+    color: rgba(255,255,255,.42);
+    text-shadow: 0 .18cqw .7cqw rgba(0,0,0,.45);
+    transition: font-size .5s cubic-bezier(.22,.8,.3,1), color .5s, opacity .5s;
+  }
+  .line[data-i="0"] { margin-left: 3.4cqw; opacity: .5; }
+  .line[data-i="1"] { margin-left: 1.7cqw; opacity: .72; }
+  .line[data-i="3"] { margin-left: 1.7cqw; opacity: .72; }
+  .line[data-i="4"] { margin-left: 3.4cqw; opacity: .5; }
+  .line.cur {
+    font-size: 2.45cqw;
+    font-weight: 500;
+    color: #fff;
+    text-shadow: 0 0 2.6cqw rgba(186,203,255,.5), 0 .2cqw .8cqw rgba(0,0,0,.5);
+    animation: breathe 4.5s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%,100% { text-shadow: 0 0 2.6cqw rgba(186,203,255,.5), 0 .2cqw .8cqw rgba(0,0,0,.5); }
+    50%     { text-shadow: 0 0 3.6cqw rgba(200,214,255,.75), 0 .2cqw .8cqw rgba(0,0,0,.5); }
+  }
+
+  /* ── 侧边圆钮 ── */
+  .side-btn {
+    position: absolute; right: 3cqw; top: 30cqw;
+    width: 3.4cqw; height: 3.4cqw;
+    display: grid; place-items: center;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    backdrop-filter: blur(14px);
+    color: rgba(255,255,255,.85); cursor: pointer;
+  }
+  .side-btn:hover { background: rgba(255,255,255,.16); }
+
+  /* ── 底部：进度条 + 胶囊控制栏 ── */
+  .bottom {
+    position: absolute; left: 0; right: 0; bottom: 2.8cqw;
+    display: flex; flex-direction: column; align-items: center; gap: 1.1cqw;
+  }
+  .progress {
+    width: 84%; height: .22cqw; border-radius: 999px;
+    background: rgba(255,255,255,.18);
+    overflow: hidden;
+  }
+  .progress i {
+    display: block; height: 100%; width: 34%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(150,185,255,.9), rgba(196,166,255,.9));
+    animation: grow 74s linear infinite;
+  }
+  @keyframes grow { from { width: 22%; } to { width: 88%; } }
+
+  .bar {
+    display: flex; align-items: center; gap: 1.5cqw;
+    padding: 1cqw 2cqw;
+    border-radius: 999px;
+    background: rgba(255,255,255,.09);
+    backdrop-filter: blur(26px);
+    border: 1px solid rgba(255,255,255,.15);
+    box-shadow: 0 1cqw 3cqw rgba(0,0,0,.3);
+  }
+  .bar button {
+    border: none; background: none; padding: 0;
+    color: rgba(255,255,255,.88);
+    display: grid; place-items: center;
+    cursor: pointer;
+    transition: color .2s, transform .2s;
+  }
+  .bar button:hover { color: #fff; transform: scale(1.08); }
+
+  .cover {
+    width: 3.1cqw; height: 3.1cqw; border-radius: .7cqw;
+    background: linear-gradient(140deg, #7b6bb8, #2f3c72);
+    flex: none;
+  }
+  .ico { width: 1.75cqw; height: 1.75cqw; }
+  .ico-sm { width: 1.5cqw; height: 1.5cqw; }
+
+  .play {
+    width: 3.6cqw; height: 3.6cqw; border-radius: 50% !important;
+    background: rgba(255,255,255,.94) !important;
+    color: #1a1630 !important;
+    flex: none;
+  }
+  .play:hover { transform: scale(1.06) !important; }
+  .play .ico { width: 1.7cqw; height: 1.7cqw; }
+
+  .txt-btn { font-size: 1.05cqw; letter-spacing: .02em; }
+  .badge-num { font-size: .95cqw; color: rgba(255,255,255,.62); }
+
+  .sep {
+    width: 1px; height: 1.9cqw;
+    background: rgba(255,255,255,.16);
+    flex: none;
+  }
+
+  /* 右下角说明条 */
+  .hint {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    bottom: -34px;
+    font-size: 12px; color: #6b6b78; white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <!-- 第一层：背景图（铺满，无边框） -->
+  <div class="bg"></div>
+
+  <!-- 顶栏 -->
+  <button class="back" title="返回">‹</button>
+  <div class="account">
+    <div class="avatar"></div>
+    <span class="name">难得再见春风</span>
+    <span class="vip">VIP</span>
+  </div>
+
+  <!-- 歌词：斜排，逐行错落，当前行放大高亮 -->
+  <div class="lyrics">
+    <p class="line" data-i="0">我们在忙我们都忙我们到底在忙什么</p>
+    <p class="line" data-i="1">还是忙着不一样的人生</p>
+    <p class="line cur" data-i="2">那天我经过一片花园可是你不在</p>
+    <p class="line" data-i="3">现在我看着浪漫电影噢可是你不在</p>
+    <p class="line" data-i="4">我们在忙我们都忙我们到底在忙什么</p>
+  </div>
+
+  <!-- 侧边圆钮 -->
+  <button class="side-btn" title="（这个按钮是什么？）">
+    <svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M12 3v18M3 12h18"/>
+    </svg>
+  </button>
+
+  <!-- 底部 -->
+  <div class="bottom">
+    <div class="progress"><i></i></div>
+    <div class="bar">
+      <div class="cover"></div>
+
+      <button title="收藏">
+        <svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 20s-7-4.7-7-9.5A4.2 4.2 0 0 1 12 7.6a4.2 4.2 0 0 1 7 2.9C19 15.3 12 20 12 20z"/>
+        </svg>
+      </button>
+
+      <button title="上一首">
+        <svg class="ico" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 5h2v14H6zM20 5v14l-11-7z"/>
+        </svg>
+      </button>
+
+      <button class="play" id="playBtn" title="播放 / 暂停">
+        <svg class="ico" id="playIcon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5h3v14H8zM13 5h3v14h-3z"/>
+        </svg>
+      </button>
+
+      <button title="下一首">
+        <svg class="ico" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 5h2v14h-2zM4 5l11 7-11 7z"/>
+        </svg>
+      </button>
+
+      <button title="播放列表">
+        <svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M4 7h16M4 12h16M4 17h10"/>
+        </svg>
+      </button>
+
+      <button title="定时关闭">
+        <svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>
+        </svg>
+      </button>
+
+      <div class="sep"></div>
+
+      <button class="txt-btn" title="歌词开关">词</button>
+
+      <button title="音质">
+        <svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M4 15V9M9 18V6M14 16V8M19 13v-2"/>
+        </svg>
+      </button>
+
+      <button title="评论">
+        <svg class="ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M20 12a7 7 0 0 1-7 7H8l-4 3v-6.5A7 7 0 0 1 11 5h2a7 7 0 0 1 7 7z"/>
+        </svg>
+      </button>
+
+      <div class="sep"></div>
+      <span class="badge-num">360</span>
+    </div>
+  </div>
+
+  <div class="hint">原型 v1 · 尺寸为 16:9 等比缩放，改窗口大小整体跟着缩</div>
+</div>
+
+<script>
+  const btn = document.getElementById('playBtn');
+  const icon = document.getElementById('playIcon');
+  const progress = document.querySelector('.progress i');
+  const PAUSE = 'M8 5h3v14H8zM13 5h3v14h-3z';
+  const PLAY  = 'M8 5l11 7-11 7z';
+  let playing = true;
+
+  btn.addEventListener('click', () => {
+    playing = !playing;
+    icon.innerHTML = `<path d="${playing ? PAUSE : PLAY}"/>`;
+    progress.style.animationPlayState = playing ? 'running' : 'paused';
+  });
+</script>
+
+</body>
+</html>
