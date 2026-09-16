@@ -49,13 +49,12 @@ const options = {
   extraResources: [
     './licenses',
   ],
-  // 本机全局有 ELECTRON_RUN_AS_NODE=1，会让 Electron 双击后退化成一个空转的
-  // Node 解释器、窗口不出现（在那个模式下 Electron 不读 package.json 的 main，
-  // 应用代码一行都跑不到，没法自救）。所以随包附一个 VBS 启动器：双击它先把
-  // 污染变量摘掉再拉起应用，全程没有黑框。详见该文件内的说明。
-  extraFiles: [
-    { from: './build-config/launcher/启动 LX Music.vbs', to: '启动 LX Music.vbs' },
-  ],
+  // 注：这里曾经挂过一个 VBS 启动器（extraFiles），用来绕开 ELECTRON_RUN_AS_NODE=1。
+  // 后来查清那个变量只存在于 WorkBuddy 的会话里，用户本机（用户级/系统级注册表都查过）
+  // 并没有 —— 双击 exe 本来就正常，纯属误判，已移除。
+  // 顺带一个理由：.vbs 在国内杀软眼里很敏感，分享给别人的包里不该出现。
+  // 文件本身保留在 build-config/launcher/ 备查（那个模式下 Electron 不读 package.json
+  // 的 main，应用代码一行都跑不到，真出问题只能靠外部启动器救）。
   publish: [
     {
       provider: 'github',
@@ -75,12 +74,22 @@ const winOptions = {
     // artifactName: '${productName}-v${version}-${env.ARCH}-${env.TARGET}.${ext}',
   },
   nsis: {
+    // 完整安装向导：欢迎页 → 许可协议 → 选安装目录 → 安装 → 完成页勾选「立即运行」
     oneClick: false,
     language: '2052',
     allowToChangeInstallationDirectory: true,
     // differentialPackage: true,
     license: './licenses/license.rtf',
     shortcutName: 'LX Music',
+    // 按用户安装（装到 %LOCALAPPDATA%\Programs\lx-music-desktop），不弹 UAC、不用管理员，
+    // 给别人的机器装上也不会污染全局。
+    perMachine: false,
+    allowElevation: true,
+    // 桌面快捷方式 + 完成页勾选运行；卸载时保留用户数据（歌单/音源/设置）
+    createDesktopShortcut: true,
+    createStartMenuShortcut: true,
+    runAfterFinish: true,
+    deleteAppDataOnUninstall: false,
   },
 }
 /**

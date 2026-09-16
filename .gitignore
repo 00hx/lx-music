@@ -74,3 +74,7 @@ src/**/*-internal.js
 
 # 界面回归验证（_docs/tools/verify-ui.js）产生的临时数据目录
 .verify-data
+
+# 安装包冒烟测试（_docs/tools/test-installer.js）产生的临时目录
+.test-install
+.test-extract
