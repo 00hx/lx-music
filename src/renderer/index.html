@@ -7,7 +7,6 @@
 <style>
   html, body { margin:0; padding:0; overflow:hidden; background:#000; }
   #c { display:block; width:100vw; height:100vh; }
-  .hint { position:fixed; left:12px; top:12px; color:#666; font:11px sans-serif; pointer-events:none; z-index:9; }
 
 /* ============================================================
    底部横向胶囊毛玻璃播放控制条
@@ -177,7 +176,7 @@
   --top-btn-size:  46px;                    /* 圆形按钮直径 */
   --top-avatar:    38px;                    /* 头像直径 */
   --top-gap:       12px;                    /* 两个控件间距 */
-  --top-offset-y:  18px;                    /* 距顶部 */
+  --top-offset-y:  68px;                    /* 距顶部 */
   --top-offset-x:  20px;                    /* 距右侧 */
   --top-name-size: 15px;                    /* 昵称字号 */
 }
@@ -252,7 +251,6 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div class="hint">H 显示/隐藏调试面板</div>
 
 <!-- three.js r128 + 后期处理（Afterimage 拖尾 + UnrealBloom 辉光）-->
 <script>/* === three.min.js (inlined) === */
@@ -1350,7 +1348,7 @@ const PARAMS = {
   DISC:     { count: 20480, rMin: 3, rMax: 46, arms: 3, wind: 0.075, tilt: 1.35 },
   DOF:      { near: 61.5, range: 34.0 },
   POS:      { y: 6.0 },
-  BG:       { scale: 0.82, posX: 0.58, posY: 0.50 }   // 背景：竖向撑满 + 定位 + 缩放
+  BG:       { scale: 1.00, posX: 0.58, posY: 0.50 }   // 背景：竖向撑满（scale=1 上下正好铺满）
 };
 // 【外部可在此处覆盖参数】 接音乐时写：PARAMS.uIntensity = 你的低频归一化值;
 // =====================================================
