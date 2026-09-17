@@ -597,10 +597,24 @@ const P = {
     this.lyric = []
     this.lyricIndex = -1
     renderLyric()
-    if (!song || !song.songmid || song.source === 'local') return   // 本地文件没有在线歌词
+    if (!song || song.source === 'local') return   // 本地文件没有在线歌词
+    // 1) 酷我源且自带酷我 musicId：优先走原酷我接口（最稳、且带封面）
+    if (song.source === 'kw' && song.songmid) {
+      if (await this._loadKwLyric(song.songmid)) return
+    }
+    // 2) 其余：按「歌名 + 歌手」去 QQ 音乐搜词（不依赖 songmid 是不是某源的 id）
+    if (song.name) {
+      const mid = await this._searchQQMusicId(song.name, song.singer)
+      if (mid && await this._loadQQLyric(mid)) return
+    }
+    console.warn('[lx] 这首歌暂时取不到歌词：' + (song && song.name))
+  },
+
+  // 酷我直连取词（保留，给酷我源用）
+  async _loadKwLyric(musicId) {
     const base = 'https://m.kuwo.cn/newh5/singles/songinfoandlrc?musicId=' +
-      encodeURIComponent(song.songmid) + '&httpsStatus=1'
-    for (let i = 0; i < 3; i++) {
+      encodeURIComponent(musicId) + '&httpsStatus=1'
+    for (let i = 0; i < 2; i++) {
       try {
         const url = i === 0 ? base : base + '&reqId=' + Math.random().toString(36).slice(2, 14)
         const txt = await httpGet(url, 'https://m.kuwo.cn/')
@@ -609,22 +623,78 @@ const P = {
         if (Array.isArray(list) && list.length) {
           this.lyric = list.map(x => ({ time: Number(x.time) || 0, text: String(x.lineLyric || '').trim() }))
           const pic = data.data.songinfo && data.data.songinfo.pic
-          if (pic) {
-            const cover = $('.cover')
-            if (cover) {
-              if (!cover.dataset.origin) cover.dataset.origin = cover.getAttribute('src')
-              cover.src = pic
-            }
-          }
+          if (pic) this._setCover(pic)
           renderLyric()
-          return
+          return true
         }
       } catch (e) {
-        console.warn('[lx] 取歌词第 ' + (i + 1) + ' 次失败：' + (e && e.message))
+        console.warn('[lx] 酷我歌词第 ' + (i + 1) + ' 次失败：' + (e && e.message))
       }
       await new Promise(r => setTimeout(r, 400))
     }
-    console.warn('[lx] 这首歌暂时取不到歌词：' + song.name)
+    return false
+  },
+
+  // 按歌名+歌手搜 QQ 音乐，返回匹配（优先歌手同名）的 songmid
+  async _searchQQMusicId(name, singer) {
+    const w = encodeURIComponent((name || '') + (singer ? ' ' + singer : ''))
+    const url = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?w=' + w + '&format=json&p=1&n=10&cr=1'
+    for (let i = 0; i < 2; i++) {
+      try {
+        const txt = await httpGet(url, 'https://y.qq.com/')
+        const j = JSON.parse(txt.trim())
+        const list = (j && j.data && j.data.song && j.data.song.list) || []
+        if (list.length) {
+          const hit = (singer && list.find(s => s.singer && s.singer[0] && s.singer[0].name && s.singer[0].name.indexOf(singer) >= 0)) || list[0]
+          return hit.songmid || ''
+        }
+      } catch (e) {
+        console.warn('[lx] QQ 搜词第 ' + (i + 1) + ' 次失败：' + (e && e.message))
+      }
+      await new Promise(r => setTimeout(r, 400))
+    }
+    return ''
+  },
+
+  async _loadQQLyric(songmid) {
+    const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?songmid=' +
+      encodeURIComponent(songmid) + '&format=json&nobase64=0&g_tk=5381'
+    for (let i = 0; i < 2; i++) {
+      try {
+        const txt = await httpGet(url, 'https://y.qq.com/')
+        const j = JSON.parse(txt.trim())
+        const b64 = j && j.lyric
+        if (!b64) return false
+        const lines = this._parseLrc(Buffer.from(b64, 'base64').toString('utf8'))
+        if (lines.length) {
+          this.lyric = lines
+          renderLyric()
+          return true
+        }
+      } catch (e) {
+        console.warn('[lx] QQ 歌词第 ' + (i + 1) + ' 次失败：' + (e && e.message))
+      }
+      await new Promise(r => setTimeout(r, 400))
+    }
+    return false
+  },
+
+  _parseLrc(lrc) {
+    const out = []
+    const re = /\[(\d+):(\d+(?:\.\d+)?)\](.*)/
+    for (const raw of (lrc || '').split(/\r?\n/)) {
+      const m = raw.match(re)
+      if (m) out.push({ time: Number(m[1]) * 60 + Number(m[2]), text: (m[3] || '').trim() })
+    }
+    return out
+  },
+
+  _setCover(pic) {
+    const cover = $('.cover')
+    if (cover) {
+      if (!cover.dataset.origin) cover.dataset.origin = cover.getAttribute('src')
+      cover.src = pic
+    }
   },
 
   /** 定时器：到点暂停 */
