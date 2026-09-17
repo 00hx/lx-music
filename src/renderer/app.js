@@ -1426,7 +1426,7 @@ const PANEL_HTML = `
         <div class="lxRow" style="background:transparent;padding:0 0 4px">
           <div>
             <div class="lxRow__label">音乐推荐</div>
-            <div class="lxRow__hint">两个平台飙升榜前 15 首 · 每 90 秒自动刷新 · 点 ▶ 直接播放 / ＋ 加入队列</div>
+            <div class="lxRow__hint">两个平台飙升榜前 15 首 · 每 2 小时自动刷新 · 点 ▶ 直接播放 / ＋ 加入队列</div>
           </div>
         </div>
         <div class="lxSeg" id="lxBoardSeg" style="margin:6px 0 12px">
@@ -2423,7 +2423,7 @@ function renderBoards() {
   const cur = box._tab || 'qq'
   const arr = box._data[cur] || []
   const t = box._updated ? new Date(box._updated).toLocaleTimeString('zh-CN') : ''
-  const meta = '<div class="lxBoardMeta">实时飙升榜 · 更新于 ' + t + ' · 每 90 秒自动刷新</div>'
+  const meta = '<div class="lxBoardMeta">实时飙升榜 · 更新于 ' + t + ' · 每 2 小时自动刷新</div>'
   if (!arr.length) {
     box.innerHTML = meta + '<div class="lxEmpty">' + (cur === 'qq' ? 'QQ音乐飙升榜' : '网易云飙升榜') +
       '暂未取到（接口可能限流，稍后自动重试）</div>'
@@ -2444,14 +2444,14 @@ function renderBoards() {
   ).join('')
 }
 
-/** 推荐页可见时每 90s 自动重拉（force），离开/关面板时停止 */
+/** 推荐页可见时每 2h 自动重拉（force），离开/关面板时停止 */
 function startBoardAuto() {
   stopBoardAuto()
   boardTimer = setInterval(() => {
     const active = document.querySelector('.lxp__tabs button.is-on')
     if (!active || active.dataset.tab !== 'recommend') return
     loadBoards(true)
-  }, 90000)
+  }, 7200000)
 }
 function stopBoardAuto() {
   if (boardTimer) { clearInterval(boardTimer); boardTimer = null }
