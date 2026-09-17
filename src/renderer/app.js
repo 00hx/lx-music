@@ -90,6 +90,10 @@ const CH = {
   getCacheSize: 'winMain_get_cache_size',
   clearCache: 'winMain_clear_cache',
   openDirInExplorer: 'winMain_open_dir_in_explorer',
+  // 窗口控制。主进程原本就有这两个通道（min → minimize()，
+  // close 传 true → app.exit(0) 直接退出），所以不用动主进程。
+  min: 'winMain_min',
+  close: 'winMain_close',
 }
 
 /** 音质档位，键是音源契约里的取值 */
@@ -2342,6 +2346,24 @@ function bindTopBar() {
   if (home) home.addEventListener('click', () => openPanel('api'))
   const user = $('.topbar__user')
   if (user) user.addEventListener('click', () => openPanel('play'))
+
+  // 窗口控制：最小化 / 关闭
+  const winBox = $('.topbar__win')
+  if (winBox) {
+    winBox.addEventListener('click', e => {
+      const btn = e.target.closest('[data-win]')
+      if (!btn) return
+      e.stopPropagation()
+      if (btn.dataset.win === 'min') {
+        ipcRenderer.send(CH.min)
+      } else {
+        // 传 true = 直接退出程序（主进程那边是 app.exit(0)），
+        // 不是缩到托盘。关之前先把播放位置存下来。
+        try { S.save() } catch (err) { /* 存不了就算了 */ }
+        ipcRenderer.send(CH.close, true)
+      }
+    })
+  }
 }
 
 function bindPanel() {
