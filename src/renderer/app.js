@@ -1289,6 +1289,7 @@ const PANEL_HTML = `
         <button data-tab="queue">队列</button>
         <button data-tab="play">控制</button>
         <button data-tab="ui">界面</button>
+        <button data-tab="recommend">推荐</button>
       </div>
       <button class="lxp__close" data-close="1">✕</button>
     </div>
@@ -1416,6 +1417,23 @@ const PANEL_HTML = `
         </div>
         <div class="lxBtns" style="margin-top:12px">
           <button class="lxBtn" id="lxUiReset">恢复默认</button>
+        </div>
+      </div>
+
+      <!-- ── 推荐 ── -->
+      <div class="lxp__page" data-page="recommend">
+        <div class="lxRow" style="background:transparent;padding:0 0 4px">
+          <div>
+            <div class="lxRow__label">音乐推荐</div>
+            <div class="lxRow__hint">两个平台热歌榜前 15 首 · 点 ▶ 直接播放 / ＋ 加入队列</div>
+          </div>
+        </div>
+        <div class="lxSeg" id="lxBoardSeg" style="margin:6px 0 12px">
+          <button data-bt="qq" class="is-on">QQ音乐 · 热歌榜</button>
+          <button data-bt="wy">网易云 · 热歌榜</button>
+        </div>
+        <div class="lxList" id="lxBoardBox">
+          <div class="lxEmpty">点开「推荐」即可加载排行榜</div>
         </div>
       </div>
 
@@ -2131,6 +2149,7 @@ function openPanel(tab) {
   if (!p) return
   p.hidden = false
   if (tab) switchTab(tab)
+  if (tab === 'recommend') loadBoards()
   renderApiPage()
   renderQueue()
   renderControls()
@@ -2342,6 +2361,108 @@ function cleanEntity(s) {
 }
 
 /* ════════════════════════════════════════════════════════════
+   十二·五、音乐推荐（QQ / 网易云 热歌榜）
+   ════════════════════════════════════════════════════════════ */
+
+/** QQ音乐热歌榜（topId=26），免 token，真实接口 */
+async function fetchQQBoard(n = 15) {
+  try {
+    const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg?type=rank&json=1&data=' +
+      encodeURIComponent(JSON.stringify({
+        detail: { module: 'musicToplist.ToplistInfoServer', method: 'GetDetail', param: { topId: 26, offset: 0, num: n, songType: 0 } }
+      }))
+    const txt = await httpGet(url, 'https://y.qq.com/portal/playlist.html')
+    const j = JSON.parse(txt)
+    const list = j?.detail?.data?.songInfoList || []
+    return list.slice(0, n).map(s => ({ name: s.name, singer: (s.singer || []).map(x => x.name).join('/') }))
+  } catch (e) {
+    console.warn('[lx] QQ榜拉取失败', e)
+    return []
+  }
+}
+
+/** 网易云热歌榜（id=3778678），真实接口 */
+async function fetchWYBoard(n = 15) {
+  try {
+    const url = 'https://music.163.com/api/playlist/detail?id=3778678'
+    const txt = await httpGet(url, 'https://music.163.com/')
+    const j = JSON.parse(txt)
+    const list = j?.result?.tracks || j?.playlist?.tracks || []
+    return list.slice(0, n).map(s => ({ name: s.name, singer: (s.artists || []).map(a => a.name).join('/') }))
+  } catch (e) {
+    console.warn('[lx] 网易云榜拉取失败', e)
+    return []
+  }
+}
+
+/** 进入推荐页时拉双榜（已加载过不再重复请求） */
+async function loadBoards() {
+  const box = $('#lxBoardBox')
+  if (!box || box._loaded) return
+  box.innerHTML = '<div class="lxEmpty">排行榜加载中…</div>'
+  const [qq, wy] = await Promise.all([fetchQQBoard(15), fetchWYBoard(15)])
+  box._data = { qq, wy }
+  box._tab = box._tab || 'qq'
+  box._loaded = true
+  renderBoards()
+}
+
+function renderBoards() {
+  const box = $('#lxBoardBox')
+  if (!box || !box._data) return
+  const cur = box._tab || 'qq'
+  const arr = box._data[cur] || []
+  if (!arr.length) {
+    box.innerHTML = '<div class="lxEmpty">' + (cur === 'qq' ? 'QQ音乐热歌榜' : '网易云热歌榜') +
+      '暂未取到（接口可能限流，关掉重进或稍后重试）</div>'
+    return
+  }
+  box.innerHTML = arr.map((s, i) =>
+    '<div class="lxItem" data-bname="' + esc(s.name) + '" data-bsinger="' + esc(s.singer) + '">' +
+      '<span class="lxItem__idx">' + (i + 1) + '</span>' +
+      '<div class="lxItem__main">' +
+        '<div class="lxItem__name">' + esc(s.name) + '</div>' +
+        '<div class="lxItem__meta">' + esc(s.singer) + '</div>' +
+      '</div>' +
+      '<div class="lxItem__act is-always">' +
+        '<button title="加入队列" data-badd>＋</button>' +
+        '<button title="立即播放" data-bplay>▶</button>' +
+      '</div>' +
+    '</div>'
+  ).join('')
+}
+
+/** 按「歌名 + 歌手」走酷我搜索取第一首可播放的歌（复用已验证链路） */
+async function searchFirstSong(name, singer) {
+  const kw = singer ? (name + ' ' + singer) : name
+  const url = 'http://search.kuwo.cn/r.s?all=' + encodeURIComponent(kw) +
+    '&ft=music&itemset=web_2013&client=kt&pn=0&rn=1&rformat=json&encoding=utf8&vipver=1'
+  const text = await httpGet(url, 'http://www.kuwo.cn/')
+  const songs = parseKuwoSearch(text)
+  return songs[0] || null
+}
+
+async function playBoardSong(name, singer) {
+  if (!name) return
+  const song = await searchFirstSong(name, singer)
+  if (!song) { toast('没搜到可播放的源：' + name); return }
+  S.queue.push(Object.assign({}, song))
+  const idx = S.queue.length - 1
+  S.save(); renderQueue()
+  P.playIndex(idx, true)
+  toast('正在播放：' + song.name)
+}
+
+async function addBoardSong(name, singer) {
+  if (!name) return
+  const song = await searchFirstSong(name, singer)
+  if (!song) { toast('没搜到：' + name); return }
+  S.queue.push(Object.assign({}, song))
+  S.save(); renderQueue()
+  toast('已加入队列：' + song.name + '（第 ' + S.queue.length + ' 首）')
+}
+
+/* ════════════════════════════════════════════════════════════
    十三、事件绑定
    ════════════════════════════════════════════════════════════ */
 
@@ -2445,7 +2566,20 @@ function bindPanel() {
     if (close) { closePanel(); return }
 
     const tab = e.target.closest('.lxp__tabs button')
-    if (tab) { switchTab(tab.dataset.tab); return }
+    if (tab) { switchTab(tab.dataset.tab); if (tab.dataset.tab === 'recommend') loadBoards(); return }
+
+    // 推荐页：QQ / 网易云 子榜切换
+    const bt = e.target.closest('#lxBoardSeg button')
+    if (bt) {
+      $$('#lxBoardSeg button').forEach(x => x.classList.toggle('is-on', x === bt))
+      const box = $('#lxBoardBox'); if (box) { box._tab = bt.dataset.bt; renderBoards() }
+      return
+    }
+    // 推荐页：播放 / 加入队列
+    const bplay = e.target.closest('[data-bplay]')
+    if (bplay) { const it = bplay.closest('.lxItem'); if (it) playBoardSong(it.dataset.bname, it.dataset.bsinger); return }
+    const badd = e.target.closest('[data-badd]')
+    if (badd) { const it = badd.closest('.lxItem'); if (it) addBoardSong(it.dataset.bname, it.dataset.bsinger); return }
 
     // 音源列表
     const rm = e.target.closest('[data-remove]')
