@@ -1163,6 +1163,7 @@ const CSS = `
 .lxApiTag.is-mid{ color:#f0d183; background:rgba(240,209,131,.12); }
 .lxApiTag.is-bad{ color:#ff9d9d; background:rgba(255,110,110,.13); }
 .lxEmpty{ padding:14px; color:rgba(255,255,255,.3); font-size:12.5px; text-align:center; }
+.lxBoardMeta{ color:rgba(255,255,255,.38); font-size:11.5px; margin:2px 0 10px; letter-spacing:.4px; }
 
 /* 滑块 */
 .lxRange{ -webkit-appearance:none; width:100%; height:3px; border-radius:99px;
@@ -1425,12 +1426,12 @@ const PANEL_HTML = `
         <div class="lxRow" style="background:transparent;padding:0 0 4px">
           <div>
             <div class="lxRow__label">音乐推荐</div>
-            <div class="lxRow__hint">两个平台热歌榜前 15 首 · 点 ▶ 直接播放 / ＋ 加入队列</div>
+            <div class="lxRow__hint">两个平台飙升榜前 15 首 · 每 90 秒自动刷新 · 点 ▶ 直接播放 / ＋ 加入队列</div>
           </div>
         </div>
         <div class="lxSeg" id="lxBoardSeg" style="margin:6px 0 12px">
-          <button data-bt="qq" class="is-on">QQ音乐 · 热歌榜</button>
-          <button data-bt="wy">网易云 · 热歌榜</button>
+          <button data-bt="qq" class="is-on">QQ音乐 · 飙升榜</button>
+          <button data-bt="wy">网易云 · 飙升榜</button>
         </div>
         <div class="lxList" id="lxBoardBox">
           <div class="lxEmpty">点开「推荐」即可加载排行榜</div>
@@ -2154,17 +2155,20 @@ function openPanel(tab) {
   renderQueue()
   renderControls()
   refreshCacheSize()
+  syncBoardAuto()
 }
 
 function closePanel() {
   const p = $('#lxPanel')
   if (p) p.hidden = true
   closePopup()
+  stopBoardAuto()
 }
 
 function switchTab(tab) {
   $$('.lxp__tabs button').forEach(b => b.classList.toggle('is-on', b.dataset.tab === tab))
   $$('.lxp__page').forEach(p => p.classList.toggle('is-on', p.dataset.page === tab))
+  syncBoardAuto()
 }
 
 async function refreshCacheSize() {
@@ -2361,15 +2365,15 @@ function cleanEntity(s) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   十二·五、音乐推荐（QQ / 网易云 热歌榜）
+   十二·五、音乐推荐（QQ / 网易云 飙升榜，自动刷新）
    ════════════════════════════════════════════════════════════ */
 
-/** QQ音乐热歌榜（topId=26），免 token，真实接口 */
+/** QQ音乐飙升榜（topId=62），免 token，真实接口 */
 async function fetchQQBoard(n = 15) {
   try {
     const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg?type=rank&json=1&data=' +
       encodeURIComponent(JSON.stringify({
-        detail: { module: 'musicToplist.ToplistInfoServer', method: 'GetDetail', param: { topId: 26, offset: 0, num: n, songType: 0 } }
+        detail: { module: 'musicToplist.ToplistInfoServer', method: 'GetDetail', param: { topId: 62, offset: 0, num: n, songType: 0 } }
       }))
     const txt = await httpGet(url, 'https://y.qq.com/portal/playlist.html')
     const j = JSON.parse(txt)
@@ -2381,10 +2385,10 @@ async function fetchQQBoard(n = 15) {
   }
 }
 
-/** 网易云热歌榜（id=3778678），真实接口 */
+/** 网易云飙升榜（id=19723756），真实接口 */
 async function fetchWYBoard(n = 15) {
   try {
-    const url = 'https://music.163.com/api/playlist/detail?id=3778678'
+    const url = 'https://music.163.com/api/playlist/detail?id=19723756'
     const txt = await httpGet(url, 'https://music.163.com/')
     const j = JSON.parse(txt)
     const list = j?.result?.tracks || j?.playlist?.tracks || []
@@ -2396,14 +2400,20 @@ async function fetchWYBoard(n = 15) {
 }
 
 /** 进入推荐页时拉双榜（已加载过不再重复请求） */
-async function loadBoards() {
+let boardTimer = null
+
+/** 进入推荐页时拉双榜；force=true 时跳过缓存、静默刷新（不打断当前列表） */
+async function loadBoards(force) {
   const box = $('#lxBoardBox')
-  if (!box || box._loaded) return
-  box.innerHTML = '<div class="lxEmpty">排行榜加载中…</div>'
+  if (!box) return
+  if (box._loaded && !force) return
+  if (!force) box.innerHTML = '<div class="lxEmpty">排行榜加载中…</div>'
   const [qq, wy] = await Promise.all([fetchQQBoard(15), fetchWYBoard(15)])
+  if (!box) return
   box._data = { qq, wy }
   box._tab = box._tab || 'qq'
   box._loaded = true
+  box._updated = Date.now()
   renderBoards()
 }
 
@@ -2412,12 +2422,14 @@ function renderBoards() {
   if (!box || !box._data) return
   const cur = box._tab || 'qq'
   const arr = box._data[cur] || []
+  const t = box._updated ? new Date(box._updated).toLocaleTimeString('zh-CN') : ''
+  const meta = '<div class="lxBoardMeta">实时飙升榜 · 更新于 ' + t + ' · 每 90 秒自动刷新</div>'
   if (!arr.length) {
-    box.innerHTML = '<div class="lxEmpty">' + (cur === 'qq' ? 'QQ音乐热歌榜' : '网易云热歌榜') +
-      '暂未取到（接口可能限流，关掉重进或稍后重试）</div>'
+    box.innerHTML = meta + '<div class="lxEmpty">' + (cur === 'qq' ? 'QQ音乐飙升榜' : '网易云飙升榜') +
+      '暂未取到（接口可能限流，稍后自动重试）</div>'
     return
   }
-  box.innerHTML = arr.map((s, i) =>
+  box.innerHTML = meta + arr.map((s, i) =>
     '<div class="lxItem" data-bname="' + esc(s.name) + '" data-bsinger="' + esc(s.singer) + '">' +
       '<span class="lxItem__idx">' + (i + 1) + '</span>' +
       '<div class="lxItem__main">' +
@@ -2430,6 +2442,24 @@ function renderBoards() {
       '</div>' +
     '</div>'
   ).join('')
+}
+
+/** 推荐页可见时每 90s 自动重拉（force），离开/关面板时停止 */
+function startBoardAuto() {
+  stopBoardAuto()
+  boardTimer = setInterval(() => {
+    const active = document.querySelector('.lxp__tabs button.is-on')
+    if (!active || active.dataset.tab !== 'recommend') return
+    loadBoards(true)
+  }, 90000)
+}
+function stopBoardAuto() {
+  if (boardTimer) { clearInterval(boardTimer); boardTimer = null }
+}
+function syncBoardAuto() {
+  const active = document.querySelector('.lxp__tabs button.is-on')
+  if (active && active.dataset.tab === 'recommend') startBoardAuto()
+  else stopBoardAuto()
 }
 
 /** 按「歌名 + 歌手」走酷我搜索取第一首可播放的歌（复用已验证链路） */
