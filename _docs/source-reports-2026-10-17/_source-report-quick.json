@@ -1,0 +1,1132 @@
+{
+  "at": "2026-10-17T13:27:18.625Z",
+  "dir": "_sources",
+  "songs": [
+    {
+      "source": "kw",
+      "songmid": "440613",
+      "name": "稻香",
+      "singer": "周杰伦",
+      "albumName": "魔杰座"
+    },
+    {
+      "source": "kw",
+      "songmid": "228908",
+      "name": "晴天",
+      "singer": "周杰伦",
+      "albumName": "叶惠美"
+    },
+    {
+      "source": "kw",
+      "songmid": "93157",
+      "name": "江南",
+      "singer": "林俊杰",
+      "albumName": "第二天堂"
+    }
+  ],
+  "qualities": [
+    "128k"
+  ],
+  "only": [],
+  "rounds": 1,
+  "results": [
+    {
+      "round": 1,
+      "file": "default-changqing.js",
+      "name": "长青SVIP音源",
+      "version": "1.3.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 0
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://yinyue.haitangw.net/kw/kw.php?type=mp3&id=440613&level=standard",
+          "晴天": "http://yinyue.haitangw.net/kw/kw.php?type=mp3&id=228908&level=standard"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": false,
+            "code": 404,
+            "hops": 0,
+            "bytes": 548,
+            "type": "text/html"
+          },
+          "晴天": {
+            "ok": false,
+            "code": 404,
+            "hops": 0,
+            "bytes": 548,
+            "type": "text/html"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      },
+      "timedOut": true
+    },
+    {
+      "round": 1,
+      "file": "flower.js",
+      "name": "野花🌷",
+      "version": "1",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/428a4e293846ad4d507141ceebe02682/6ad36ace/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3",
+          "晴天": "http://car-er.kuwo.cn/c377392f5acfdd6e28d214eec823987b/6ad3740a/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3",
+          "江南": "http://car-er.kuwo.cn/5efa7ec865c5a9e1f95f6a38046242d5/6ad36aeb/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k"
+        ],
+        "kg": [
+          "128k"
+        ],
+        "tx": [
+          "128k"
+        ],
+        "wy": [
+          "128k"
+        ],
+        "mg": [
+          "128k"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "grass.js",
+      "name": "野草🌾",
+      "version": "1",
+      "inited": true,
+      "platforms": [
+        "kw"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/428a4e293846ad4d507141ceebe02682/6ad36ace/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3",
+          "晴天": "http://car-er.kuwo.cn/c377392f5acfdd6e28d214eec823987b/6ad3740a/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3",
+          "江南": "http://car-er.kuwo.cn/5efa7ec865c5a9e1f95f6a38046242d5/6ad36aeb/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "hywmusic.js",
+      "name": "HYWmusic_beta_公益测试",
+      "version": "v0.74.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 0
+      },
+      "url": {
+        "128k": {
+          "稻香": null,
+          "晴天": null
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: 卡密已过期，请下载最新正式版：http://103.79.184.97/"
+          },
+          "晴天": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: 卡密已过期，请下载最新正式版：http://103.79.184.97/"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "mg": [
+          "128k"
+        ]
+      },
+      "timedOut": true
+    },
+    {
+      "round": 1,
+      "file": "jiexiang.js",
+      "name": "杰翔聚合音源",
+      "version": "2.3.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/3f0d9e369482f100bd189670a516d72a/6ad371fd/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "江南": "http://car-er.kuwo.cn/3e13876b59ee84f517a872881f352060/6ad37786/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "juhe.js",
+      "name": "聚合API接口 (CF)",
+      "version": "3",
+      "inited": false,
+      "platforms": [],
+      "ok": {
+        "128k": 0
+      },
+      "url": {},
+      "http": {},
+      "initError": "脚本初始化失败"
+    },
+    {
+      "round": 1,
+      "file": "kxh.js",
+      "name": "K×H测试",
+      "version": "1.7.17",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/b4b2bf08c43a2fc6db30f0bc06f2eb21/6ad369ed/resource/1307392909/trackmedia/F000003aAYrm3GE0Ac_1.flac",
+          "晴天": "http://car-er.kuwo.cn/ce138ae9dcf6385b19b84de502b8d358/6ad36c48/resource/30106/trackmedia/F000000bYDlc2XxKLs.flac",
+          "江南": "http://car-er.kuwo.cn/ecc665ea9b6c2551dcf3260571173356/6ad37772/resource/30106/trackmedia/M500001ziKgJ3o5Ipp.mp3"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/x-flac"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/x-flac"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "lx.js",
+      "name": "独家音源",
+      "version": "6",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg",
+        "local"
+      ],
+      "ok": {
+        "128k": 0
+      },
+      "url": {
+        "128k": {
+          "稻香": null,
+          "晴天": null
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: read ECONNRESET"
+          },
+          "晴天": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: read ECONNRESET"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "local": []
+      },
+      "timedOut": true
+    },
+    {
+      "round": 1,
+      "file": "molan.js",
+      "name": "墨澜聚合音源",
+      "version": "2.3.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/3f0d9e369482f100bd189670a516d72a/6ad371fd/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "江南": "http://car-er.kuwo.cn/3e13876b59ee84f517a872881f352060/6ad37786/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "nianxin.js",
+      "name": "念心音源",
+      "version": "1.0.2",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=440613&level=standard&type=mp3",
+          "晴天": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=228908&level=standard&type=mp3",
+          "江南": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=93157&level=standard&type=mp3"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "qdy.js",
+      "name": "全豆要[聚合音源]",
+      "version": "9.3 93特供版 DeepSeek优化",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 0
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://kw-er.kuwo.cn/81a0892e0d4000b010abc74f3b6a4fb2/6ad03f86/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&format",
+          "晴天": "http://kw-er.kuwo.cn/6cefea03a9a9b5b9996a7699ce040698/6ad0097c/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&format"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": false,
+            "code": 410,
+            "hops": 0,
+            "bytes": 0,
+            "type": ""
+          },
+          "晴天": {
+            "ok": false,
+            "code": 410,
+            "hops": 0,
+            "bytes": 0,
+            "type": ""
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      },
+      "timedOut": true
+    },
+    {
+      "round": 1,
+      "file": "stellarwave.js",
+      "name": "星澜聚合音源 (StellarWave)",
+      "version": "v3.2.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/3f0d9e369482f100bd189670a516d72a/6ad371fd/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "江南": "http://car-er.kuwo.cn/3e13876b59ee84f517a872881f352060/6ad37786/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "suyin.js",
+      "name": "溯音音源",
+      "version": "v1",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://kw-er.kuwo.cn/1c13e5858f1f983f1f546f2eb309fc64/6ad37182/resource/1307392909/trackmedia/O400003aAYrm3GE0Ac_1.ogg?bitrate$100",
+          "晴天": "http://kw-er.kuwo.cn/19dcf9fb7dd0efd4c091153caf82e341/6ad35f7f/resource/30106/trackmedia/O800000bYDlc2XxKLs.ogg?bitrate$300&format",
+          "江南": "http://kw-er.kuwo.cn/c7978149c8a4f7957c1b5d92a231325a/6ad377a3/resource/1307392909/trackmedia/O400004TXEXY2G2c7C.ogg?bitrate$100&f"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "xinghai.js",
+      "name": "星海音乐源",
+      "version": "v3.2.13",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/3f0d9e369482f100bd189670a516d72a/6ad371fd/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "江南": "http://car-er.kuwo.cn/3e13876b59ee84f517a872881f352060/6ad37786/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "yuningxi.js",
+      "name": "lx-玉宁熙-Pro",
+      "version": "v1.2.2",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/05476b6653ea32fe47744a156c990c4b/6ad377a8/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3",
+          "晴天": "http://car-er.kuwo.cn/104edbdd201c6618e92a4844f2812315/6ad377a8/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3",
+          "江南": "http://car-er.kuwo.cn/9c8e33fc664e444f9f10f6aa21f5f7a1/6ad377a8/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "yuxi.js",
+      "name": "屿溪-终章",
+      "version": "0.0.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 3
+      },
+      "url": {
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/48cfca27a2ab02632f97ec12d32c7e5a/6ad377aa/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/ff6798e9831b38b2e9ad7cb9bab3cfb0/6ad377aa/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "江南": "http://car-er.kuwo.cn/bc2cc103c3719c4ea3bfd10a5f2ec6c4/6ad377ab/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ]
+      }
+    }
+  ]
+}

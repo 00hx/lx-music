@@ -1,0 +1,1513 @@
+{
+  "at": "2026-10-17T13:29:11.251Z",
+  "dir": "_sources",
+  "songs": [
+    {
+      "source": "kw",
+      "songmid": "440613",
+      "name": "稻香",
+      "singer": "周杰伦",
+      "albumName": "魔杰座"
+    },
+    {
+      "source": "kw",
+      "songmid": "228908",
+      "name": "晴天",
+      "singer": "周杰伦",
+      "albumName": "叶惠美"
+    },
+    {
+      "source": "kw",
+      "songmid": "93157",
+      "name": "江南",
+      "singer": "林俊杰",
+      "albumName": "第二天堂"
+    },
+    {
+      "source": "kw",
+      "songmid": "317730",
+      "name": "富士山下",
+      "singer": "陈奕迅",
+      "albumName": "What's Going On...?"
+    },
+    {
+      "source": "kw",
+      "songmid": "5886682",
+      "name": "海阔天空",
+      "singer": "BEYOND",
+      "albumName": "乐与怒"
+    }
+  ],
+  "qualities": [
+    "320k",
+    "128k"
+  ],
+  "only": [
+    "flower.js",
+    "grass.js",
+    "jiexiang.js",
+    "kxh.js",
+    "molan.js",
+    "nianxin.js",
+    "stellarwave.js",
+    "suyin.js",
+    "xinghai.js",
+    "yuningxi.js",
+    "yuxi.js"
+  ],
+  "rounds": 1,
+  "results": [
+    {
+      "round": 1,
+      "file": "flower.js",
+      "name": "野花🌷",
+      "version": "1",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 0,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": null,
+          "晴天": null,
+          "江南": null,
+          "富士山下": null,
+          "海阔天空": null
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/428a4e293846ad4d507141ceebe02682/6ad36ace/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3",
+          "晴天": "http://car-er.kuwo.cn/c377392f5acfdd6e28d214eec823987b/6ad3740a/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3",
+          "江南": "http://car-er.kuwo.cn/5efa7ec865c5a9e1f95f6a38046242d5/6ad36aeb/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3",
+          "富士山下": "http://car-lv.kuwo.cn/b219f29b3c07b37516c500315ebfdef2/6ad375d6/resource/30106/trackmedia/M500000AZdTD09A7jL.mp3",
+          "海阔天空": "http://car-er.kuwo.cn/f7e154e72b583261c5ee7cbcb54e4b5e/6ad36ba4/resource/30106/trackmedia/M500003hHrGg3UTast.mp3"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          },
+          "晴天": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          },
+          "江南": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          },
+          "富士山下": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          },
+          "海阔天空": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k"
+        ],
+        "kg": [
+          "128k"
+        ],
+        "tx": [
+          "128k"
+        ],
+        "wy": [
+          "128k"
+        ],
+        "mg": [
+          "128k"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "grass.js",
+      "name": "野草🌾",
+      "version": "1",
+      "inited": true,
+      "platforms": [
+        "kw"
+      ],
+      "ok": {
+        "320k": 0,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": null,
+          "晴天": null,
+          "江南": null,
+          "富士山下": null,
+          "海阔天空": null
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/428a4e293846ad4d507141ceebe02682/6ad36ace/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3",
+          "晴天": "http://car-er.kuwo.cn/c377392f5acfdd6e28d214eec823987b/6ad3740a/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3",
+          "江南": "http://car-er.kuwo.cn/5efa7ec865c5a9e1f95f6a38046242d5/6ad36aeb/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3",
+          "富士山下": "http://car-lv.kuwo.cn/b219f29b3c07b37516c500315ebfdef2/6ad375d6/resource/30106/trackmedia/M500000AZdTD09A7jL.mp3",
+          "海阔天空": "http://car-er.kuwo.cn/f7e154e72b583261c5ee7cbcb54e4b5e/6ad36ba4/resource/30106/trackmedia/M500003hHrGg3UTast.mp3"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          },
+          "晴天": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          },
+          "江南": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          },
+          "富士山下": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          },
+          "海阔天空": {
+            "ok": false,
+            "why": "Error invoking remote method 'winMain_request_user_api': Error: Fail"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "jiexiang.js",
+      "name": "杰翔聚合音源",
+      "version": "2.3.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://car-er.kuwo.cn/b6d932e44ee74c260a4550be71634172/6ad377e4/resource/30106/trackmedia/M800003aAYrm3GE0Ac.mp3?bitrate$320&forma",
+          "晴天": "http://car-er.kuwo.cn/3118736e31ddf0a808df2d8d9a6aabd8/6ad37429/resource/30106/trackmedia/M800000bYDlc2XxKLs.mp3?bitrate$320&forma",
+          "江南": "http://car-er.kuwo.cn/a53faefd760013de199478377acd14ce/6ad377e5/resource/30106/trackmedia/M800004TXEXY2G2c7C.mp3?bitrate$320&forma",
+          "富士山下": "http://car-lv.kuwo.cn/9b5679dd506d495cad550a9bf33b4948/6ad377e7/resource/30106/trackmedia/M800000AZdTD09A7jL.mp3?bitrate$320&forma",
+          "海阔天空": "http://car-er.kuwo.cn/7a18dc6293d52c41eaa45fa93961d1d8/6ad377e7/resource/30106/trackmedia/M800003hHrGg3UTast.mp3?bitrate$320&forma"
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/3f0d9e369482f100bd189670a516d72a/6ad371fd/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "江南": "http://car-er.kuwo.cn/3e13876b59ee84f517a872881f352060/6ad37786/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma",
+          "富士山下": "http://car-lv.kuwo.cn/83206bdd2f3f092320729de582bc0c3f/6ad374de/resource/30106/trackmedia/M500000AZdTD09A7jL.mp3?bitrate$128&forma",
+          "海阔天空": "http://car-er.kuwo.cn/26c37e1f71d5867984d2552f163a3ed2/6ad37434/resource/30106/trackmedia/M500003hHrGg3UTast.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "kxh.js",
+      "name": "K×H测试",
+      "version": "1.7.17",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://car-er.kuwo.cn/b4b2bf08c43a2fc6db30f0bc06f2eb21/6ad369ed/resource/1307392909/trackmedia/F000003aAYrm3GE0Ac_1.flac",
+          "晴天": "http://car-er.kuwo.cn/e92d421352af787425a4cf69ba06e761/6ad37150/resource/30106/trackmedia/F000000bYDlc2XxKLs.flac?bitrate$2000&for",
+          "江南": "http://car-er.kuwo.cn/a03fe9c882ff1ebbb2984452e18b07a8/6ad3778a/resource/1307392909/trackmedia/F000004TXEXY2G2c7C.flac",
+          "富士山下": "http://car-er.kuwo.cn/98411368833702ae2e934475c44ce2b4/6ad377ec/resource/1307392909/trackmedia/F000000AZdTD09A7jL.flac?bitrate$200",
+          "海阔天空": "http://car-er.kuwo.cn/97c05267bce67e5648b1a6ad0eb26894/6ad36e34/resource/1307392909/trackmedia/F000003hHrGg3UTast_1.flac"
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ecc665ea9b6c2551dcf3260571173356/6ad37772/resource/30106/trackmedia/M500001ziKgJ3o5Ipp.mp3",
+          "晴天": "http://car-er.kuwo.cn/ce138ae9dcf6385b19b84de502b8d358/6ad36c48/resource/30106/trackmedia/F000000bYDlc2XxKLs.flac",
+          "江南": "http://car-er.kuwo.cn/ecc665ea9b6c2551dcf3260571173356/6ad37772/resource/30106/trackmedia/M500001ziKgJ3o5Ipp.mp3",
+          "富士山下": "http://car-er.kuwo.cn/ecc665ea9b6c2551dcf3260571173356/6ad37772/resource/30106/trackmedia/M500001ziKgJ3o5Ipp.mp3",
+          "海阔天空": "http://car-er.kuwo.cn/ecc665ea9b6c2551dcf3260571173356/6ad37772/resource/30106/trackmedia/M500001ziKgJ3o5Ipp.mp3"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/x-flac"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/x-flac"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/x-flac"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/x-flac"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/x-flac"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/x-flac"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "molan.js",
+      "name": "墨澜聚合音源",
+      "version": "2.3.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://car-er.kuwo.cn/b6d932e44ee74c260a4550be71634172/6ad377e4/resource/30106/trackmedia/M800003aAYrm3GE0Ac.mp3?bitrate$320&forma",
+          "晴天": "http://car-er.kuwo.cn/3118736e31ddf0a808df2d8d9a6aabd8/6ad37429/resource/30106/trackmedia/M800000bYDlc2XxKLs.mp3?bitrate$320&forma",
+          "江南": "http://car-er.kuwo.cn/a53faefd760013de199478377acd14ce/6ad377e5/resource/30106/trackmedia/M800004TXEXY2G2c7C.mp3?bitrate$320&forma",
+          "富士山下": "http://car-lv.kuwo.cn/9b5679dd506d495cad550a9bf33b4948/6ad377e7/resource/30106/trackmedia/M800000AZdTD09A7jL.mp3?bitrate$320&forma",
+          "海阔天空": "http://car-er.kuwo.cn/7a18dc6293d52c41eaa45fa93961d1d8/6ad377e7/resource/30106/trackmedia/M800003hHrGg3UTast.mp3?bitrate$320&forma"
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "https://other-er.kuwo.cn/4bea7bbb1c6e08ccf5197b4ad2af328c/6ad377f5/resource/30106/trackmedia/M5000004Gmy54cGDqK.mp3?bitrate$1&form",
+          "江南": "http://car-er.kuwo.cn/3e13876b59ee84f517a872881f352060/6ad37786/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma",
+          "富士山下": "http://car-lv.kuwo.cn/83206bdd2f3f092320729de582bc0c3f/6ad374de/resource/30106/trackmedia/M500000AZdTD09A7jL.mp3?bitrate$128&forma",
+          "海阔天空": "http://car-er.kuwo.cn/26c37e1f71d5867984d2552f163a3ed2/6ad37434/resource/30106/trackmedia/M500003hHrGg3UTast.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "nianxin.js",
+      "name": "念心音源",
+      "version": "1.0.2",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=440613&level=exhigh&type=mp3",
+          "晴天": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=228908&level=exhigh&type=mp3",
+          "江南": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=93157&level=exhigh&type=mp3",
+          "富士山下": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=317730&level=exhigh&type=mp3",
+          "海阔天空": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=5886682&level=exhigh&type=mp3"
+        },
+        "128k": {
+          "稻香": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=440613&level=standard&type=mp3",
+          "晴天": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=228908&level=standard&type=mp3",
+          "江南": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=93157&level=standard&type=mp3",
+          "富士山下": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=317730&level=standard&type=mp3",
+          "海阔天空": "http://mcp.nianxinxz.com/share/ceshi/kw.php?id=5886682&level=standard&type=mp3"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 2,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "stellarwave.js",
+      "name": "星澜聚合音源 (StellarWave)",
+      "version": "v3.2.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 4
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://car-er.kuwo.cn/b6d932e44ee74c260a4550be71634172/6ad377e4/resource/30106/trackmedia/M800003aAYrm3GE0Ac.mp3?bitrate$320&forma",
+          "晴天": "http://car-er.kuwo.cn/3118736e31ddf0a808df2d8d9a6aabd8/6ad37429/resource/30106/trackmedia/M800000bYDlc2XxKLs.mp3?bitrate$320&forma",
+          "江南": "http://car-er.kuwo.cn/a53faefd760013de199478377acd14ce/6ad377e5/resource/30106/trackmedia/M800004TXEXY2G2c7C.mp3?bitrate$320&forma",
+          "富士山下": "http://car-lv.kuwo.cn/9b5679dd506d495cad550a9bf33b4948/6ad377e7/resource/30106/trackmedia/M800000AZdTD09A7jL.mp3?bitrate$320&forma",
+          "海阔天空": "http://car-er.kuwo.cn/7a18dc6293d52c41eaa45fa93961d1d8/6ad377e7/resource/30106/trackmedia/M800003hHrGg3UTast.mp3?bitrate$320&forma"
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://175.27.166.236:8928/kwstream?id=228908&level=128k&stream=1",
+          "江南": "http://car-er.kuwo.cn/3e13876b59ee84f517a872881f352060/6ad37786/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma",
+          "富士山下": "http://car-lv.kuwo.cn/83206bdd2f3f092320729de582bc0c3f/6ad374de/resource/30106/trackmedia/M500000AZdTD09A7jL.mp3?bitrate$128&forma",
+          "海阔天空": "http://car-er.kuwo.cn/26c37e1f71d5867984d2552f163a3ed2/6ad37434/resource/30106/trackmedia/M500003hHrGg3UTast.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": false,
+            "code": 400,
+            "hops": 0,
+            "bytes": 57,
+            "type": "application/json"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "suyin.js",
+      "name": "溯音音源",
+      "version": "v1",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://kw-er.kuwo.cn/67d3fcf574e1074c8c406bcb48fdb611/6ad3780b/resource/1307392909/trackmedia/O600003aAYrm3GE0Ac.ogg?bitrate$192&f",
+          "晴天": "http://kw-er.kuwo.cn/324205781677ef1d913664970aa6c58c/6ad36039/resource/30106/trackmedia/O600000bYDlc2XxKLs.ogg?bitrate$192&format",
+          "江南": "http://kw-er.kuwo.cn/765db320530f6c7a9f3d2f111373f022/6ad3780c/resource/1307392909/trackmedia/O800004TXEXY2G2c7C.ogg?bitrate$300&f",
+          "富士山下": "http://kw-er.kuwo.cn/eed635798d09c73c654ccd77db6d8080/6ad3780c/resource/30106/trackmedia/O600001ZG2cl1RTvK8.ogg?bitrate$192&format",
+          "海阔天空": "http://kw-er.kuwo.cn/30ce4594f2a6e5a1d26557cdbe919cfb/6ad3780d/resource/30106/trackmedia/O600003hHrGg3UTast.ogg?bitrate$192&format"
+        },
+        "128k": {
+          "稻香": "http://kw-er.kuwo.cn/1c13e5858f1f983f1f546f2eb309fc64/6ad37182/resource/1307392909/trackmedia/O400003aAYrm3GE0Ac_1.ogg?bitrate$100",
+          "晴天": "http://kw-er.kuwo.cn/19dcf9fb7dd0efd4c091153caf82e341/6ad35f7f/resource/30106/trackmedia/O800000bYDlc2XxKLs.ogg?bitrate$300&format",
+          "江南": "http://kw-er.kuwo.cn/c7978149c8a4f7957c1b5d92a231325a/6ad377a3/resource/1307392909/trackmedia/O400004TXEXY2G2c7C.ogg?bitrate$100&f",
+          "富士山下": "http://kw-er.kuwo.cn/f0f3b1a05b5455fc4a177f969804964d/6ad3780e/resource/1307392909/trackmedia/O400001ZG2cl1RTvK8_1.ogg?bitrate$100",
+          "海阔天空": "http://kw-er.kuwo.cn/a0f1e7533ce167d4900c8904872d3546/6ad3780e/resource/1307392909/trackmedia/O400003hHrGg3UTast_1.ogg?bitrate$100"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/ogg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "xinghai.js",
+      "name": "星海音乐源",
+      "version": "v3.2.13",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://car-er.kuwo.cn/b6d932e44ee74c260a4550be71634172/6ad377e4/resource/30106/trackmedia/M800003aAYrm3GE0Ac.mp3?bitrate$320&forma",
+          "晴天": "http://car-er.kuwo.cn/3118736e31ddf0a808df2d8d9a6aabd8/6ad37429/resource/30106/trackmedia/M800000bYDlc2XxKLs.mp3?bitrate$320&forma",
+          "江南": "http://car-er.kuwo.cn/a53faefd760013de199478377acd14ce/6ad377e5/resource/30106/trackmedia/M800004TXEXY2G2c7C.mp3?bitrate$320&forma",
+          "富士山下": "http://car-lv.kuwo.cn/9b5679dd506d495cad550a9bf33b4948/6ad377e7/resource/30106/trackmedia/M800000AZdTD09A7jL.mp3?bitrate$320&forma",
+          "海阔天空": "http://car-er.kuwo.cn/7a18dc6293d52c41eaa45fa93961d1d8/6ad377e7/resource/30106/trackmedia/M800003hHrGg3UTast.mp3?bitrate$320&forma"
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/3f0d9e369482f100bd189670a516d72a/6ad371fd/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "江南": "http://car-er.kuwo.cn/3e13876b59ee84f517a872881f352060/6ad37786/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma",
+          "富士山下": "http://car-lv.kuwo.cn/83206bdd2f3f092320729de582bc0c3f/6ad374de/resource/30106/trackmedia/M500000AZdTD09A7jL.mp3?bitrate$128&forma",
+          "海阔天空": "http://car-er.kuwo.cn/26c37e1f71d5867984d2552f163a3ed2/6ad37434/resource/30106/trackmedia/M500003hHrGg3UTast.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "yuningxi.js",
+      "name": "lx-玉宁熙-Pro",
+      "version": "v1.2.2",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://car-er.kuwo.cn/688ad2b1717db8cd48699918a8f1dc0b/6ad37815/resource/30106/trackmedia/M800003aAYrm3GE0Ac.mp3",
+          "晴天": "http://car-er.kuwo.cn/346f087c8229efd057decc11a7302862/6ad37815/resource/30106/trackmedia/M800000bYDlc2XxKLs.mp3",
+          "江南": "http://car-er.kuwo.cn/906b31bf952397d00b2fe24ef7f99f06/6ad37815/resource/30106/trackmedia/M800004TXEXY2G2c7C.mp3",
+          "富士山下": "http://car-lv.kuwo.cn/3522ec984e187b2c3614060265e2ffc8/6ad37815/resource/30106/trackmedia/M800000AZdTD09A7jL.mp3",
+          "海阔天空": "http://car-er.kuwo.cn/111f5a7cb5bb190bede921c5b46498c6/6ad37815/resource/30106/trackmedia/M800003hHrGg3UTast.mp3"
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/933121a2fde6c5a26291ac493711a45a/6ad37815/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3",
+          "晴天": "http://car-er.kuwo.cn/c74253f2bb509f1eef60e2c1e5f9b89b/6ad37816/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3",
+          "江南": "http://car-er.kuwo.cn/085e0f80b1991078d722e06efc10050c/6ad37816/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3",
+          "富士山下": "http://car-lv.kuwo.cn/a2fe8989b883553ff38451cd500439e1/6ad37816/resource/30106/trackmedia/M500000AZdTD09A7jL.mp3",
+          "海阔天空": "http://car-er.kuwo.cn/28cb5fafd4b5383c13df3012bdefd248/6ad37816/resource/30106/trackmedia/M500003hHrGg3UTast.mp3"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "file": "yuxi.js",
+      "name": "屿溪-终章",
+      "version": "0.0.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "320k": 5,
+        "128k": 5
+      },
+      "url": {
+        "320k": {
+          "稻香": "http://car-er.kuwo.cn/521d770a991d5af5d889ba21f29c7159/6ad37818/resource/30106/trackmedia/M800003aAYrm3GE0Ac.mp3?bitrate$320&forma",
+          "晴天": "http://car-er.kuwo.cn/be6196dfbe62e4b5fd5ec34ed3612d0a/6ad37819/resource/30106/trackmedia/M800000bYDlc2XxKLs.mp3?bitrate$320&forma",
+          "江南": "http://car-er.kuwo.cn/a8a41db1ad5aebc0fbf8ae98d9f698a9/6ad37819/resource/30106/trackmedia/M800004TXEXY2G2c7C.mp3?bitrate$320&forma",
+          "富士山下": "http://car-lv.kuwo.cn/b5d860d839953f995cdae2e51186c146/6ad37819/resource/30106/trackmedia/M800000AZdTD09A7jL.mp3?bitrate$320&forma",
+          "海阔天空": "http://car-er.kuwo.cn/66e902f96fcbd6aa02db17361a946f76/6ad37819/resource/30106/trackmedia/M800003hHrGg3UTast.mp3?bitrate$320&forma"
+        },
+        "128k": {
+          "稻香": "http://car-er.kuwo.cn/1cb8c123f92074c42c9cb628efcc8a80/6ad3781a/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/7bc873b143a154e25fc5aec319f5c4ce/6ad3781a/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "江南": "http://car-er.kuwo.cn/82e69d416e06fcc12326ce5a573329c8/6ad3781b/resource/30106/trackmedia/M500004TXEXY2G2c7C.mp3?bitrate$128&forma",
+          "富士山下": "http://car-lv.kuwo.cn/64b9a14a16afeebfbcc45bb5f774b761/6ad3781b/resource/30106/trackmedia/M500000AZdTD09A7jL.mp3?bitrate$128&forma",
+          "海阔天空": "http://car-er.kuwo.cn/abdba4727176eeabcfad1706c2c97e35/6ad3781b/resource/30106/trackmedia/M500003hHrGg3UTast.mp3?bitrate$128&forma"
+        }
+      },
+      "http": {
+        "320k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        },
+        "128k": {
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "江南": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "富士山下": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ]
+      }
+    }
+  ]
+}

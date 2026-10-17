@@ -5,7 +5,8 @@
  *   electron _probe-dir.js --dir=_sources --songs=5 --qualities=320k,128k --profile=.probe-a --out=_report-a.json
  *
  *   --dir        被测音源目录（默认 _sources）
- *   --songs      测几首歌（默认 5，最多 5）
+ *   --songs      测几首歌（默认全部）
+ *   --songs-file 自定义歌曲 JSON：[{source,songmid,name,singer,albumName}]
  *   --qualities  测哪些音质，逗号分隔（默认 320k,128k）
  *   --profile    隔离用的 userData 目录（默认 .source-test-data）
  *   --out        结果 JSON（默认 _source-report.json）
@@ -42,8 +43,12 @@ const BUDGET = Number(argv.budget || 90)
 const WIPE = argv.wipe != null
 const ONLY = (argv.only || '').split(',').map(s => s.trim()).filter(Boolean)
 const ROUNDS = Math.max(1, Number(argv.rounds || 1))
+// --real：拿到地址后再用 <audio> 真播一下，看播放位置走不走（HTTP 206 ≠ 能解码）
+const REAL = argv.real != null
+const PLAY_WAIT = Number(argv['play-wait'] || 6000)
 
-const ROOT = __dirname
+// 本脚本在 _docs/tools/ 下，项目根在两级之上；这样从任意 cwd 调用都能找到 dist/main.js
+const ROOT = path.resolve(__dirname, '../..')
 app.setPath('userData', path.join(ROOT, PROFILE))
 require(path.join(ROOT, 'dist', 'main.js'))
 
@@ -58,7 +63,13 @@ const ALL_SONGS = [
   { source: 'kw', songmid: '317730', name: '富士山下', singer: '陈奕迅', albumName: "What's Going On...?" },
   { source: 'kw', songmid: '5886682', name: '海阔天空', singer: 'BEYOND', albumName: '乐与怒' },
 ]
-const SONGS = ALL_SONGS.slice(0, Math.max(1, Math.min(5, Number(argv.songs || 5))))
+// --songs-file=<json>：自定义歌曲列表（[{source,songmid,name,singer,albumName}]）
+// 不传则用内置的 8 首；这两处都默认测全部，--songs=N 可截断
+let SONGS_ALL = ALL_SONGS
+if (argv['songs-file']) {
+  SONGS_ALL = JSON.parse(fs.readFileSync(path.resolve(ROOT, argv['songs-file']), 'utf8'))
+}
+const SONGS = SONGS_ALL.slice(0, Math.max(1, Number(argv.songs || SONGS_ALL.length)))
 
 const probeUrl = (url, hop = 0, seen = []) => new Promise(resolve => {
   if (!url) return resolve({ ok: false, why: '没返回地址' })
@@ -125,6 +136,23 @@ const PROBE = `window.__probe = {
   async getUrl(song, quality) {
     try { const u = await window.lxApp.lx.url(song, quality); return { url: u || null } }
     catch (e) { return { err: (e && e.message) || String(e) } }
+  },
+  // 用真实的 audio 元素解码播放，currentTime 走起来才算真能播
+  async playUrl(url, ms) {
+    const a = new Audio()
+    a.volume = 0
+    a.src = url
+    let playErr = null
+    try { await a.play() } catch (e) { playErr = e && e.name }
+    const t0 = Date.now()
+    while (Date.now() - t0 < ms) {
+      await new Promise(r => setTimeout(r, 300))
+      if (a.currentTime > 1) break
+    }
+    const t = a.currentTime || 0
+    const code = a.error ? a.error.code : null
+    try { a.pause(); a.src = ''; a.load() } catch (e) {}
+    return { ok: t > 1, t: Number(t.toFixed(2)), dur: Number((a.duration || 0).toFixed(2)), code, playErr }
   }
 }; true`
 
@@ -166,7 +194,7 @@ app.whenReady().then(async () => {
   for (const it of imported) {
     log('')
     log('▶ ' + it.file + '   ' + (it.name || ''))
-    const row = { round, file: it.file, name: it.name, version: it.version, inited: false, platforms: [], ok: {}, url: {}, http: {} }
+    const row = { round, file: it.file, name: it.name, version: it.version, inited: false, platforms: [], ok: {}, url: {}, http: {}, real: {} }
     if (!it.id) { row.initError = it.err; results.push(row); continue }
 
     await run('window.__probe.reset()')
@@ -189,10 +217,22 @@ app.whenReady().then(async () => {
         const p = await probeUrl(r.url)
         ;(row.url[quality] ||= {})[song.name] = r.url ? r.url.slice(0, 130) : null
         ;(row.http[quality] ||= {})[song.name] = r.url ? p : { ok: false, why: r.err || '没返回地址' }
-        if (p.ok) { ok++; streak = 0 } else { streak++ }
+        // 真播判定：HTTP 206 只说明能拉到字节，不代表解码器能播
+        let real = null
+        if (REAL && p.ok) {
+          real = await run('window.__probe.playUrl(' + JSON.stringify(r.url) + ',' + PLAY_WAIT + ')')
+          ;(row.real[quality] ||= {})[song.name] = real
+        }
+        const pass = p.ok && (!REAL || (real && real.ok))
+        if (pass) { ok++; streak = 0 } else { streak++ }
         let detail
         if (p.ok) {
           detail = 'HTTP ' + p.code + (p.hops ? '(跳' + p.hops + ')' : '') + ' ' + p.bytes + 'B ' + p.type
+          if (REAL && real) {
+            detail += real.ok
+              ? '  真播✓ ' + real.t + 's/' + real.dur + 's'
+              : '  真播✗ code=' + (real.code == null ? '-' : real.code) + ' ' + (real.playErr || '')
+          }
         } else if (r.err) {
           detail = r.err.slice(0, 66)
         } else {

@@ -1,0 +1,512 @@
+{
+  "at": "2026-10-17T13:37:04.246Z",
+  "dir": "_sources",
+  "songs": [
+    {
+      "source": "kw",
+      "songmid": "436126241",
+      "name": "跳楼机",
+      "singer": "Jane Zhang",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "424311901",
+      "name": "APT.",
+      "singer": "朴彩英###布鲁诺·马尔斯",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "377413145",
+      "name": "若月亮没来 (Live)",
+      "singer": "",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "281472652",
+      "name": "笼",
+      "singer": "Summer",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "142683102",
+      "name": "漠河舞厅",
+      "singer": "",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "157908",
+      "name": "吻别",
+      "singer": "Jacky Cheung",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "161705",
+      "name": "月亮代表我的心",
+      "singer": "Teresa Teng",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "5886682",
+      "name": "海阔天空",
+      "singer": "Wong Ka Kiu",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "440613",
+      "name": "稻香",
+      "singer": "Jay Chou",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "228908",
+      "name": "晴天",
+      "singer": "Jay Chou",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "15240778",
+      "name": "Shape of You",
+      "singer": "艾德·希兰",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "40602735",
+      "name": "Lemon",
+      "singer": "Yonezu Kenshi",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "268650423",
+      "name": "アイドル",
+      "singer": "YOASOBI",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "1109443",
+      "name": "The Rain",
+      "singer": "Joe Hisaishi",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "40160214",
+      "name": "River Flows In You",
+      "singer": "",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "51571722",
+      "name": "卡农",
+      "singer": "",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "262480443",
+      "name": "小城谣",
+      "singer": "HuQQ",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "181158353",
+      "name": "探窗",
+      "singer": "",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "288010178",
+      "name": "罗刹海市",
+      "singer": "",
+      "albumName": ""
+    },
+    {
+      "source": "kw",
+      "songmid": "79531914",
+      "name": "悬溺",
+      "singer": "",
+      "albumName": ""
+    }
+  ],
+  "qualities": [
+    "128k"
+  ],
+  "only": [
+    "default-jiexiang.js"
+  ],
+  "rounds": 1,
+  "results": [
+    {
+      "round": 1,
+      "file": "default-jiexiang.js",
+      "name": "杰翔聚合音源",
+      "version": "2.3.0",
+      "inited": true,
+      "platforms": [
+        "kw",
+        "kg",
+        "tx",
+        "wy",
+        "mg"
+      ],
+      "ok": {
+        "128k": 20
+      },
+      "url": {
+        "128k": {
+          "跳楼机": "http://car-er.kuwo.cn/593b19c275d6e91d7b614b15abeb5384/6ad3797e/resource/30106/trackmedia/M500000jJ2Kz4G3ZT7.mp3?bitrate$128&forma",
+          "APT.": "http://car-er.kuwo.cn/fe64892737a7a73b0ff25e3e15c51bba/6ad3797e/resource/30106/trackmedia/M500001CWslf2rktK3.mp3?bitrate$128&forma",
+          "若月亮没来 (Live)": "http://car-lv.kuwo.cn/4ba706aff81e9bac4bf58ad88ad953d9/6ad37983/resource/30106/trackmedia/M5000033D2Pr1ub63Z.mp3?bitrate$128&forma",
+          "笼": "https://kw-bj.kuwo.cn/ce3408c749666d3d739ffe62e70558d3/6ad37985/nf/resource/n1/69/32/588957081.mp3",
+          "漠河舞厅": "http://car-er.kuwo.cn/6e1c582e1717c9d3663a7eb6f238eefb/6ad37986/resource/30106/trackmedia/M500003X0xAt3nEGN3.mp3?bitrate$128&forma",
+          "吻别": "https://kw-bj.kuwo.cn/f8620126dcf25ed7daaa57770875e579/6ad37700/nf/resource/n1/69/32/588957081.mp3",
+          "月亮代表我的心": "http://car-lv.kuwo.cn/f07bca07d092a877a76a48929e372420/6ad37987/resource/30106/trackmedia/M5000031nalH3znuOP.mp3?bitrate$128&forma",
+          "海阔天空": "http://car-er.kuwo.cn/26c37e1f71d5867984d2552f163a3ed2/6ad37434/resource/30106/trackmedia/M500003hHrGg3UTast.mp3?bitrate$128&forma",
+          "稻香": "http://car-er.kuwo.cn/ee8443800dab2bf3bd2afb5c65a6839d/6ad373f3/resource/30106/trackmedia/M500003aAYrm3GE0Ac.mp3?bitrate$128&forma",
+          "晴天": "http://car-er.kuwo.cn/3f22753dbc11afb5c5f088c6b841d7df/6ad37963/resource/30106/trackmedia/M500000bYDlc2XxKLs.mp3?bitrate$128&forma",
+          "Shape of You": "https://kw-bj.kuwo.cn/5a0caeecf14673c5bb840fecae1090ef/6ad3798b/nf/resource/n1/69/32/588957081.mp3",
+          "Lemon": "https://kw-bj.kuwo.cn/74bf2efe1b55d8bdeec0b771aa3519a3/6ad3798e/nf/resource/n1/69/32/588957081.mp3",
+          "アイドル": "http://car-er.kuwo.cn/fc459180bcc6701ffe36cd032d415200/6ad3798f/resource/30106/trackmedia/M500002goZxM2L6S87.mp3?bitrate$128&forma",
+          "The Rain": "http://car-er.kuwo.cn/9816d188310c058b7c206940d4f628a8/6ad3798f/resource/30106/trackmedia/M500001RURT32IGUfD.mp3?bitrate$128&forma",
+          "River Flows In You": "https://kw-bj.kuwo.cn/0183ec2b5035a0e9d7c12ce54fcdf379/6ad37992/nf/resource/n1/69/32/588957081.mp3",
+          "卡农": "http://car-er.kuwo.cn/ad41706d08b55676cfcc7004c56b895c/6ad37993/resource/30106/trackmedia/M5000002Fs7D0ZC1k6.mp3?bitrate$128&forma",
+          "小城谣": "http://car-er.kuwo.cn/198f80aecb591bd2faaee2cdf7a698e4/6ad37994/resource/30106/trackmedia/M500001TRBBC14yqEe.mp3?bitrate$128&forma",
+          "探窗": "http://car-er.kuwo.cn/213002781d953703efab484506d2da00/6ad37994/resource/30106/trackmedia/M500000oZOKO0BT6nA.mp3?bitrate$128&forma",
+          "罗刹海市": "http://car-er.kuwo.cn/72a5d5c95e480322ea244d57de6fe9da/6ad37995/resource/30106/trackmedia/M500001UqqQm3eKSSc.mp3?bitrate$128&forma",
+          "悬溺": "https://kw-bj.kuwo.cn/e22df08904d12183fdce2a181bdd132e/6ad37997/nf/resource/n1/69/32/588957081.mp3"
+        }
+      },
+      "http": {
+        "128k": {
+          "跳楼机": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "APT.": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "若月亮没来 (Live)": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "笼": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "漠河舞厅": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "吻别": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "月亮代表我的心": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "海阔天空": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "稻香": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "晴天": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "Shape of You": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "Lemon": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "アイドル": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "The Rain": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "River Flows In You": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "卡农": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "小城谣": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "探窗": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "罗刹海市": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          },
+          "悬溺": {
+            "ok": true,
+            "code": 206,
+            "hops": 0,
+            "bytes": 4096,
+            "type": "audio/mpeg"
+          }
+        }
+      },
+      "real": {
+        "128k": {
+          "跳楼机": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "APT.": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "若月亮没来 (Live)": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "笼": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "漠河舞厅": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "吻别": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "月亮代表我的心": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "海阔天空": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "稻香": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "晴天": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "Shape of You": {
+            "ok": true,
+            "t": 1.16,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "Lemon": {
+            "ok": true,
+            "t": 1.7,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "アイドル": {
+            "ok": true,
+            "t": 1.57,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "The Rain": {
+            "ok": true,
+            "t": 1.57,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "River Flows In You": {
+            "ok": true,
+            "t": 1.51,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "卡农": {
+            "ok": true,
+            "t": 1.57,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "小城谣": {
+            "ok": true,
+            "t": 1.99,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "探窗": {
+            "ok": true,
+            "t": 1.62,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "罗刹海市": {
+            "ok": true,
+            "t": 1.29,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          },
+          "悬溺": {
+            "ok": true,
+            "t": 1.52,
+            "dur": 0,
+            "code": null,
+            "playErr": null
+          }
+        }
+      },
+      "qualitys": {
+        "kw": [
+          "128k",
+          "320k",
+          "flac",
+          "flac24bit"
+        ],
+        "kg": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "tx": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "wy": [
+          "128k",
+          "320k",
+          "flac"
+        ],
+        "mg": [
+          "128k",
+          "320k",
+          "flac"
+        ]
+      }
+    }
+  ]
+}
