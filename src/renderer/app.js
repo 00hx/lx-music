@@ -1266,6 +1266,7 @@ const CSS = `
 .lxItem__act.is-always button{ font-size:12px; }
 .lxItem__act.is-always button:hover{ background:rgba(135,226,221,.22); color:var(--track-fill); }
 .lxItem[data-song]{ cursor:pointer; }
+.lxItem[data-bname]{ cursor:pointer; }
 `
 
 function injectStyle() {
@@ -1426,7 +1427,7 @@ const PANEL_HTML = `
         <div class="lxRow" style="background:transparent;padding:0 0 4px">
           <div>
             <div class="lxRow__label">音乐推荐</div>
-            <div class="lxRow__hint">两个平台飙升榜前 15 首 · 每 2 小时自动刷新 · 点 ▶ 直接播放 / ＋ 加入队列</div>
+            <div class="lxRow__hint">两个平台飙升榜前 15 首 · 每 2 小时自动刷新 · <b>双击歌名直接播放</b> / 点 ▶ 播放 / ＋ 加入队列</div>
           </div>
         </div>
         <div class="lxSeg" id="lxBoardSeg" style="margin:6px 0 12px">
@@ -2423,7 +2424,7 @@ function renderBoards() {
   const cur = box._tab || 'qq'
   const arr = box._data[cur] || []
   const t = box._updated ? new Date(box._updated).toLocaleTimeString('zh-CN') : ''
-  const meta = '<div class="lxBoardMeta">实时飙升榜 · 更新于 ' + t + ' · 每 2 小时自动刷新</div>'
+  const meta = '<div class="lxBoardMeta">实时飙升榜 · <b>双击歌名直接播放</b> · 更新于 ' + t + ' · 每 2 小时自动刷新</div>'
   if (!arr.length) {
     box.innerHTML = meta + '<div class="lxEmpty">' + (cur === 'qq' ? 'QQ音乐飙升榜' : '网易云飙升榜') +
       '暂未取到（接口可能限流，稍后自动重试）</div>'
@@ -2717,6 +2718,15 @@ function bindPanel() {
       setSleep(Number(sl.dataset.sleep))
       return
     }
+  })
+
+  // 推荐页：双击歌名区域直接播放（点整行不触发，避免误触；按钮仍有自己的单击）
+  panel.addEventListener('dblclick', e => {
+    if (e.target.closest('[data-bplay],[data-badd]')) return   // 按钮走单击，别重复播
+    const it = e.target.closest('#lxBoardBox .lxItem[data-bname]')
+    if (!it) return
+    e.stopPropagation()
+    playBoardSong(it.dataset.bname, it.dataset.bsinger)
   })
 
   // 音源导入
